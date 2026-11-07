@@ -1,0 +1,13 @@
+{
+  "name": "My Life Planner",
+  "short_name": "Life Planner",
+  "description": "A calm, earthy space to plan your days, habits and goals.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#eee9df",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
