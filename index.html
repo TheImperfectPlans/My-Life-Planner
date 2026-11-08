@@ -24,7 +24,7 @@
         <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
         <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
         <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
-        <button class="nav-link" data-view="daily"><span>*</span> Daily Planner</button>
+        <button class="nav-link" data-view="daily"><span>☀</span> Daily Planner</button>
       </nav>
       <div class="sidebar-bottom">
         <div class="offline-indicator"><span class="status-dot"></span><span id="connection-label">Ready to plan</span></div>
@@ -133,9 +133,7 @@
         </div>
       </section>
 
-     <!-- DAILY PLANNER -->
 <section class="view" id="daily-view">
-
   <div class="page-intro">
     <p class="eyebrow">ONE DAY AT A TIME</p>
     <h1>Daily Planner<span class="period">.</span></h1>
@@ -150,7 +148,6 @@
     </button>
   </div>
 
-  <!-- TOP THREE PRIORITIES -->
   <div class="panel daily-panel">
     <div class="panel-heading">
       <div>
@@ -167,7 +164,6 @@
     </div>
   </div>
 
-  <!-- DAILY SCHEDULE -->
   <div class="panel daily-panel">
     <div class="panel-heading">
       <div>
@@ -186,7 +182,6 @@
     <div id="daily-schedule-list"></div>
   </div>
 
-  <!-- TODAY'S TASKS -->
   <div class="panel daily-panel">
     <div class="panel-heading">
       <div>
@@ -198,7 +193,6 @@
     <div id="daily-tasks-list"></div>
   </div>
 
-  <!-- DAILY HABITS -->
   <div class="panel daily-panel">
     <div class="panel-heading">
       <div>
@@ -210,7 +204,6 @@
     <div id="daily-habits-list"></div>
   </div>
 
-  <!-- DAILY REFLECTION -->
   <div class="panel daily-panel">
     <div class="panel-heading">
       <div>
@@ -222,30 +215,24 @@
     <div class="daily-reflection">
       <label>
         What went well today?
-        <textarea id="reflection-well"
-          placeholder="Something I'm proud of..."></textarea>
+        <textarea id="reflection-well" placeholder="Something I'm proud of..."></textarea>
       </label>
 
       <label>
         What was challenging?
-        <textarea id="reflection-challenge"
-          placeholder="Something I found difficult..."></textarea>
+        <textarea id="reflection-challenge" placeholder="Something I found difficult..."></textarea>
       </label>
 
       <label>
         What am I grateful for?
-        <textarea id="reflection-grateful"
-          placeholder="Today I'm grateful for..."></textarea>
+        <textarea id="reflection-grateful" placeholder="Today I'm grateful for..."></textarea>
       </label>
     </div>
 
-    <p class="daily-save-status" id="daily-save-status">
-      Your entries save automatically.
-    </p>
+    <p class="daily-save-status" id="daily-save-status">Your entries save automatically.</p>
   </div>
-
 </section>
-
+      
       <section class="view" id="habits-view">
         <div class="page-intro"><p class="eyebrow">SHOW UP FOR YOURSELF</p><h1>My habits<span class="period">.</span></h1><p class="subheading">Small actions, repeated with care.</p></div>
         <article class="panel"><div class="panel-heading"><div><p class="eyebrow">YOUR DAILY RITUALS</p><h2>Today's habits</h2></div><span class="muted" id="habit-progress">0 completed</span></div><div id="all-habits" class="habit-list expanded"></div>
