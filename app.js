@@ -343,6 +343,9 @@ function getDailyPlan(date) {
       },
       habits: []
     };
+    if (name === "daily") {
+  renderDailyPlanner();
+}
   }
 
   return data.dailyPlans[date];
