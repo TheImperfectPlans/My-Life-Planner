@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eee9df">
+  <meta name="description" content="A calm, earthy space to plan your days, habits and goals.">
+  <title>My Life Planner</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="My Life Planner home">
+        <span class="brand-mark">m.</span>
+        <span><strong>My Life Planner</strong><small>a little more intentional</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-link" data-view="tasks"><span>☷</span> My tasks</button>
+        <button class="nav-link" data-view="habits"><span>◷</span> Habits</button>
+        <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
+        <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
+        <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="offline-indicator"><span class="status-dot"></span><span id="connection-label">Ready to plan</span></div>
+        <p>Make space for what matters.</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="menu-toggle" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb">YOUR PERSONAL SPACE <span>/</span> <b id="section-name">DASHBOARD</b></div>
+        <div class="topbar-right"><span class="today-chip" id="top-date"></span><span class="avatar">M</span></div>
+      </header>
+
+      <section class="view active-view" id="dashboard-view">
+        <div class="welcome-row">
+          <div><p class="eyebrow" id="welcome-date">YOUR DAY, AT YOUR PACE</p><h1>Good morning<span class="period">.</span></h1>
+            <p class="subheading">A fresh page. A gentle place to begin.</p></div>
+          <div class="welcome-note"><span>✿</span><p>“Almost everything will work again if you unplug it for a few minutes, including you.”</p><small>— ANNE LAMOTT</small></div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-icon sage">☷</div><div><span>Tasks for today</span><strong id="task-count">0</strong><small>Keep it simple</small></div></article>
+          <article class="stat-card"><div class="stat-icon clay">◷</div><div><span>Habits completed</span><strong id="habit-count">0 / 3</strong><small>A little consistency</small></div></article>
+          <article class="stat-card"><div class="stat-icon sand">✳</div><div><span>Goals in progress</span><strong id="goal-count">0</strong><small>One step at a time</small></div></article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel tasks-panel">
+            <div class="panel-heading"><div><p class="eyebrow">YOUR PRIORITIES</p><h2>Today's tasks</h2></div><button class="text-button" data-go="tasks">View all ↗</button></div>
+            <form id="quick-task-form" class="quick-add"><input id="quick-task-input" maxlength="100" placeholder="What needs your attention?" aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
+            <div id="today-task-list" class="task-list"></div>
+            <p class="empty-hint" id="task-empty">Your list is clear. Add one small thing to get started.</p>
+          </article>
+
+          <article class="panel habits-panel">
+            <div class="panel-heading"><div><p class="eyebrow">SMALL DAILY RITUALS</p><h2>Daily habits</h2></div><button class="text-button" data-go="habits">Manage ↗</button></div>
+            <div id="dashboard-habits" class="habit-list"></div>
+          </article>
+
+          <article class="panel focus-panel">
+            <div class="panel-heading"><div><p class="eyebrow">A MOMENT FOR YOU</p><h2>Daily check-in</h2></div><span class="leaf-mark">❧</span></div>
+            <p class="checkin-question">How are you feeling today?</p>
+            <div class="mood-options" id="mood-options">
+              <button data-mood="Low" aria-label="Low mood">☁️</button><button data-mood="Okay" aria-label="Okay mood">🌿</button><button data-mood="Good" aria-label="Good mood">☀️</button><button data-mood="Great" aria-label="Great mood">🌼</button>
+            </div>
+            <p class="mood-feedback" id="mood-feedback">There is no right or wrong answer.</p>
+          </article>
+
+          <article class="panel intention-panel">
+            <p class="eyebrow">TODAY'S INTENTION</p><h2>What would make today feel meaningful?</h2>
+            <textarea id="intention-input" rows="3" maxlength="240" placeholder="Today, I want to make space for..."></textarea>
+            <span class="save-hint" id="intention-status">Saved on this device</span>
+          </article>
+        </div>
+        <footer class="page-footer">MADE FOR SLOWER, MORE INTENTIONAL DAYS <span>✳</span></footer>
+      </section>
+
+      <section class="view" id="tasks-view">
+        <div class="page-intro"><p class="eyebrow">CLEAR YOUR MIND</p><h1>My tasks<span class="period">.</span></h1><p class="subheading">Gather everything in one place.</p></div>
+        <article class="panel">
+          <form id="task-form" class="task-entry"><input id="task-input" maxlength="100" placeholder="Add a task..." aria-label="Task name" required><input id="task-date" type="date" aria-label="Due date"><button class="primary-button" type="submit">Add task +</button></form>
+          <div class="filter-row"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="open">To do</button><button class="filter" data-filter="done">Completed</button></div>
+          <div id="all-task-list" class="task-list large-list"></div><p id="all-task-empty" class="empty-hint">Nothing here yet. Add your first task above.</p>
+        </article>
+      </section>
+
+      <section class="view" id="calendar-view">
+        <div class="page-intro">
+          <p class="eyebrow">YOUR TIME, YOUR WAY</p>
+          <h1>My Calendar<span class="period">.</span></h1>
+          <p class="subheading">Keep track of the little and big things.</p>
+        </div>
+
+        <article class="panel calendar-panel">
+          <div class="calendar-toolbar">
+            <div class="calendar-navigation">
+              <button type="button" id="prev-period" aria-label="Previous period">‹</button>
+              <h2 id="calendar-heading">Month Year</h2>
+              <button type="button" id="next-period" aria-label="Next period">›</button>
+            </div>
+            <div class="calendar-actions">
+              <button type="button" id="calendar-today" class="calendar-today-button">Today</button>
+              <div class="calendar-view-switch" aria-label="Calendar view">
+                <button type="button" data-calendar-view="month" class="active" aria-pressed="true">Month</button>
+                <button type="button" data-calendar-view="week" aria-pressed="false">Week</button>
+                <button type="button" data-calendar-view="day" aria-pressed="false">Day</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="calendar-legend" aria-label="Calendar colour key">
+            <span><i class="legend-dot appointment-dot"></i> Appointment</span>
+            <span><i class="legend-dot birthday-dot"></i> Birthday</span>
+            <span><i class="legend-dot reminder-dot"></i> Reminder</span>
+            <span><i class="legend-dot task-dot"></i> Task</span>
+          </div>
+
+          <div id="calendar-grid" class="calendar-grid" aria-label="Calendar dates"></div>
+        </article>
+
+        <article class="panel calendar-form-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">MAKE A NOTE</p>
+              <h2>Add an event</h2>
+            </div>
+          </div>
+          <form id="event-form" class="event-form">
+            <input type="text" id="event-title" placeholder="Event name..." maxlength="100" required aria-label="Event name">
+            <input type="date" id="event-date" required aria-label="Event date">
+            <input type="time" id="event-time" aria-label="Event time">
+            <select id="event-type" aria-label="Event type">
+              <option value="appointment">Appointment</option>
+              <option value="birthday">Birthday</option>
+              <option value="reminder">Reminder</option>
+            </select>
+            <button type="submit" class="primary-button">Save event +</button>
+          </form>
+        </article>
+
+        <article class="panel selected-day-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">YOUR PLANS</p>
+              <h2 id="selected-day-heading">Selected date</h2>
+            </div>
+          </div>
+          <div id="selected-day-events" aria-live="polite"></div>
+        </article>
+      </section>
+
+      <section class="view" id="habits-view">
+        <div class="page-intro"><p class="eyebrow">SHOW UP FOR YOURSELF</p><h1>My habits<span class="period">.</span></h1><p class="subheading">Small actions, repeated with care.</p></div>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">YOUR DAILY RITUALS</p><h2>Today's habits</h2></div><span class="muted" id="habit-progress">0 completed</span></div><div id="all-habits" class="habit-list expanded"></div>
+          <form id="habit-form" class="task-entry"><input id="habit-input" maxlength="60" placeholder="Add a habit (e.g. Read for 10 minutes)" required><button class="primary-button" type="submit">Add habit +</button></form>
+        </article>
+      </section>
+
+      <section class="view" id="goals-view">
+        <div class="page-intro"><p class="eyebrow">LOOK TOWARDS WHAT MATTERS</p><h1>My goals<span class="period">.</span></h1><p class="subheading">Big things begin with small steps.</p></div>
+        <article class="panel"><form id="goal-form" class="task-entry"><input id="goal-input" maxlength="100" placeholder="A goal you'd like to work towards..." required><button class="primary-button" type="submit">Add goal +</button></form><div id="goal-list" class="goal-list"></div><p id="goal-empty" class="empty-hint">Your goals will find a home here.</p></article>
+      </section>
+
+      <section class="view" id="notes-view">
+        <div class="page-intro"><p class="eyebrow">THOUGHTS, IDEAS & REMINDERS</p><h1>My notes<span class="period">.</span></h1><p class="subheading">A little space to get things out of your head.</p></div>
+        <article class="panel notes-panel"><label for="notes-input" class="eyebrow">YOUR NOTEBOOK</label><textarea id="notes-input" rows="14" placeholder="Start writing..."></textarea><div class="notes-footer"><span id="notes-status" class="save-hint">Saved on this device</span><button class="text-button" id="clear-notes">Clear notes</button></div></article>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
