@@ -1,20 +1,15 @@
 const DB_NAME = "my-life-planner";
 const STORE = "planner";
 const STORAGE_KEY = "planner-data-v1";
-function today() {
-  const date = new Date();
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+const dateKey = (date) => {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const today = () => dateKey(new Date());
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
 
 const defaultData = () => ({
   tasks: [],
-  events: [],
   habits: [
     { id: "h1", name: "Drink a glass of water", done: false, date: today() },
     { id: "h2", name: "Move my body", done: false, date: today() },
@@ -29,6 +24,9 @@ const defaultData = () => ({
 let data = defaultData();
 let currentFilter = "all";
 let db = null;
+let calendarDate = new Date();
+let calendarView = "month";
+let selectedCalendarDate = today();
 
 function openDatabase() {
   return new Promise((resolve, reject) => {
@@ -102,7 +100,6 @@ function renderAll() {
   const date = new Date();
   document.getElementById("top-date").textContent = date.toLocaleDateString(undefined, { weekday:"short", day:"numeric", month:"short" });
   document.getElementById("welcome-date").textContent = date.toLocaleDateString(undefined, { weekday:"long", day:"numeric", month:"long" }).toUpperCase();
-  renderCalendar();
 }
 function renderTasks() {
   const todayTasks = data.tasks.filter(t => !t.done && (!t.date || t.date <= today()));
@@ -168,6 +165,23 @@ document.addEventListener("click", e => {
   if (habit) { const item = data.habits.find(h => h.id === habit.dataset.habit); if (item) item.done = !item.done; saveData(); renderHabits(); }
   const goalDelete = e.target.closest("[data-goal-delete]");
   if (goalDelete) { data.goals = data.goals.filter(g => g.id !== goalDelete.dataset.goalDelete); saveData(); renderGoals(); }
+  const calendarCell = e.target.closest("[data-calendar-date]");
+  if (calendarCell) {
+    selectedCalendarDate = calendarCell.dataset.calendarDate;
+    calendarDate = new Date(selectedCalendarDate + "T12:00:00");
+    renderCalendar();
+  }
+  const calendarItem = e.target.closest("[data-calendar-item]");
+  if (calendarItem) {
+    const [kind, id] = calendarItem.dataset.calendarItem.split(":");
+    if (kind === "task") {
+      const task = data.tasks.find(t => t.id === id);
+      if (task) { task.done = !task.done; saveData(); renderTasks(); renderSelectedDay(); }
+    } else if (kind === "event") {
+      data.events = data.events.filter(item => item.id !== id);
+      saveData(); renderCalendar(); renderSelectedDay(); toast("Event deleted");
+    }
+  }
 });
 document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => { currentFilter = b.dataset.filter; renderTasks(); }));
 document.getElementById("habit-form").addEventListener("submit", e => {
@@ -197,6 +211,97 @@ document.getElementById("notes-input").addEventListener("input", e => {
 document.getElementById("clear-notes").addEventListener("click", () => {
   if (confirm("Clear all your notes on this device?")) { data.notes = ""; document.getElementById("notes-input").value = ""; saveData(); }
 });
+
+// Calendar helpers and rendering
+function startOfWeek(date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  d.setDate(d.getDate() - d.getDay());
+  return d;
+}
+function addDays(date, amount) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  d.setDate(d.getDate() + amount);
+  return d;
+}
+function dateLabel(key, options = { weekday: "long", day: "numeric", month: "long", year: "numeric" }) {
+  return new Date(key + "T12:00:00").toLocaleDateString(undefined, options);
+}
+function itemsForDate(key) {
+  const events = (data.events || []).filter(item => item.date === key).map(item => ({...item, kind: "event"}));
+  const tasks = data.tasks.filter(item => item.date === key).map(item => ({...item, kind: "task", type: "task"}));
+  return [...events, ...tasks].sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+}
+function calendarItemHTML(item, compact = false) {
+  const type = item.kind === "task" ? "task" : item.type;
+  const label = `${item.time ? item.time + " · " : ""}${item.title}`;
+  if (compact) return `<span class="calendar-item ${type} ${item.kind === "task" && item.done ? "is-done" : ""}">${escapeHTML(label)}</span>`;
+  return `<button type="button" class="calendar-item ${type} ${item.kind === "task" && item.done ? "is-done" : ""}" data-calendar-item="${item.kind}:${item.id}" title="${escapeHTML(item.kind === "task" ? "Click to mark task complete or incomplete" : "Click to delete event")}">${escapeHTML(label)}<span class="calendar-item-kind">${item.kind === "task" ? (item.done ? "Done" : "Task · click to complete") : escapeHTML(item.type)}</span></button>`;
+}
+function renderCalendar() {
+  const grid = document.getElementById("calendar-grid");
+  if (!grid) return;
+  const heading = document.getElementById("calendar-heading");
+  if (calendarView === "month") {
+    heading.textContent = calendarDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+    const first = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), 1);
+    const start = startOfWeek(first);
+    grid.className = "calendar-grid month-grid";
+    grid.innerHTML = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day => `<div class="calendar-weekday">${day}</div>`).join("");
+    for (let i = 0; i < 42; i++) {
+      const date = addDays(start, i), key = dateKey(date), items = itemsForDate(key);
+      const inMonth = date.getMonth() === calendarDate.getMonth();
+      grid.insertAdjacentHTML("beforeend", `<button type="button" class="calendar-day ${inMonth ? "" : "outside-month"} ${key === today() ? "is-today" : ""} ${key === selectedCalendarDate ? "is-selected" : ""}" data-calendar-date="${key}" aria-label="${dateLabel(key)}"><span class="calendar-day-number">${date.getDate()}</span><span class="calendar-day-items">${items.slice(0,3).map(item => calendarItemHTML(item,true)).join("")}${items.length > 3 ? `<small>+${items.length-3} more</small>` : ""}</span></button>`);
+    }
+  } else if (calendarView === "week") {
+    const start = startOfWeek(calendarDate), end = addDays(start, 6);
+    heading.textContent = `${start.toLocaleDateString(undefined,{day:"numeric",month:"short"})} – ${end.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})}`;
+    grid.className = "calendar-grid period-grid week-grid";
+    grid.innerHTML = Array.from({length:7}, (_,i) => {
+      const key = dateKey(addDays(start,i));
+      return `<section class="period-day ${key === today() ? "is-today" : ""} ${key === selectedCalendarDate ? "is-selected" : ""}"><button type="button" class="period-day-heading" data-calendar-date="${key}">${dateLabel(key,{weekday:"short",day:"numeric"})}</button><div class="period-day-items">${itemsForDate(key).map(item => calendarItemHTML(item)).join("") || '<span class="muted">Nothing planned</span>'}</div></section>`;
+    }).join("");
+  } else {
+    heading.textContent = dateLabel(selectedCalendarDate);
+    grid.className = "calendar-grid period-grid day-grid";
+    const items = itemsForDate(selectedCalendarDate);
+    grid.innerHTML = `<section class="period-day selected-period-day"><div class="period-day-items">${items.map(item => calendarItemHTML(item)).join("") || '<p class="empty-hint">Nothing planned for this day yet.</p>'}</div></section>`;
+  }
+  document.querySelectorAll("[data-calendar-view]").forEach(button => button.classList.toggle("active", button.dataset.calendarView === calendarView));
+  renderSelectedDay();
+}
+function renderSelectedDay() {
+  const heading = document.getElementById("selected-day-heading"), container = document.getElementById("selected-day-events");
+  if (!heading || !container) return;
+  heading.textContent = dateLabel(selectedCalendarDate, {weekday:"short", day:"numeric", month:"short"});
+  const items = itemsForDate(selectedCalendarDate);
+  container.innerHTML = items.length ? items.map(item => calendarItemHTML(item)).join("") : '<p class="empty-hint">Nothing planned for this date. Enjoy the breathing room.</p>';
+}
+document.getElementById("event-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const title = document.getElementById("event-title"), date = document.getElementById("event-date");
+  if (!title.value.trim() || !date.value) return;
+  data.events = data.events || [];
+  data.events.push({id:uid(), title:title.value.trim(), date:date.value, time:document.getElementById("event-time").value, type:document.getElementById("event-type").value});
+  selectedCalendarDate = date.value; calendarDate = new Date(date.value + "T12:00:00");
+  saveData(); renderCalendar(); title.value = ""; document.getElementById("event-time").value = "";
+  toast("Event saved to your calendar");
+});
+document.getElementById("calendar-prev").addEventListener("click", () => {
+  if (calendarView === "month") calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth()-1, 1);
+  else if (calendarView === "week") calendarDate = addDays(calendarDate,-7);
+  else { selectedCalendarDate = dateKey(addDays(new Date(selectedCalendarDate+"T12:00:00"),-1)); calendarDate = new Date(selectedCalendarDate+"T12:00:00"); }
+  renderCalendar();
+});
+document.getElementById("calendar-next").addEventListener("click", () => {
+  if (calendarView === "month") calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth()+1, 1);
+  else if (calendarView === "week") calendarDate = addDays(calendarDate,7);
+  else { selectedCalendarDate = dateKey(addDays(new Date(selectedCalendarDate+"T12:00:00"),1)); calendarDate = new Date(selectedCalendarDate+"T12:00:00"); }
+  renderCalendar();
+});
+document.getElementById("calendar-today").addEventListener("click", () => {calendarDate=new Date();selectedCalendarDate=today();renderCalendar();});
+document.querySelectorAll("[data-calendar-view]").forEach(button => button.addEventListener("click", () => {calendarView=button.dataset.calendarView;renderCalendar();}));
+document.getElementById("event-date").value = today();
+
 function showView(name) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active-view"));
   document.getElementById(`${name}-view`).classList.add("active-view");
@@ -216,486 +321,3 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   }));
 }
 loadData();
-
-/* =================================
-   MY LIFE PLANNER - CALENDAR LOGIC
-================================= */
-
-// Calendar settings
-
-let calendarDate = new Date();
-let selectedCalendarDate = today();
-let calendarView = "month";
-
-
-// Convert date strings into local dates
-
-function parseLocalDate(dateString) {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
-
-// Format a date as YYYY-MM-DD
-
-function formatDateKey(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
-
-// Display date in a readable format
-
-function formatCalendarDate(dateString) {
-  return parseLocalDate(dateString).toLocaleDateString("en-AU", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
-}
-
-
-// Get all events and tasks for a date
-
-function getCalendarItems(dateString) {
-
-  const events = (data.events || [])
-    .filter(event => event.date === dateString)
-    .map(event => ({
-      ...event,
-      itemType: event.type,
-      label: event.title
-    }));
-
-  const tasks = (data.tasks || [])
-    .filter(task => task.date === dateString)
-    .map(task => ({
-      ...task,
-      itemType: "task",
-      label: task.title
-    }));
-
-  return [...events, ...tasks].sort((a, b) => {
-    return (a.time || "").localeCompare(b.time || "");
-  });
-}
-
-
-// Create the calendar grid
-
-function renderCalendar() {
-
-  const grid = document.getElementById("calendar-grid");
-
-  if (!grid) return;
-
-  grid.innerHTML = "";
-
-  const heading = document.getElementById("calendar-heading");
-
-  const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-  const year = calendarDate.getFullYear();
-  const month = calendarDate.getMonth();
-
-  let dates = [];
-
-
-  // MONTH VIEW
-
-  if (calendarView === "month") {
-
-    heading.textContent = calendarDate.toLocaleDateString("en-AU", {
-      month: "long",
-      year: "numeric"
-    });
-
-    weekdays.forEach(day => {
-      const label = document.createElement("div");
-      label.className = "calendar-weekday";
-      label.textContent = day;
-      grid.appendChild(label);
-    });
-
-    const firstDay = new Date(year, month, 1);
-    const offset = (firstDay.getDay() + 6) % 7;
-
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 0; i < offset; i++) {
-      dates.push(null);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      dates.push(new Date(year, month, day));
-    }
-
-    grid.className = "calendar-grid month-view";
-  }
-
-
-  // WEEK VIEW
-
-  if (calendarView === "week") {
-
-    const current = new Date(calendarDate);
-
-    const mondayOffset = (current.getDay() + 6) % 7;
-
-    const monday = new Date(current);
-    monday.setDate(current.getDate() - mondayOffset);
-
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-
-    heading.textContent =
-      monday.toLocaleDateString("en-AU", { day: "numeric", month: "short" }) +
-      " – " +
-      sunday.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
-
-    weekdays.forEach(day => {
-      const label = document.createElement("div");
-      label.className = "calendar-weekday";
-      label.textContent = day;
-      grid.appendChild(label);
-    });
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(monday);
-      date.setDate(monday.getDate() + i);
-      dates.push(date);
-    }
-
-    grid.className = "calendar-grid week-view";
-  }
-
-
-  // DAY VIEW
-
-  if (calendarView === "day") {
-
-    heading.textContent = calendarDate.toLocaleDateString("en-AU", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
-
-    dates.push(new Date(calendarDate));
-
-    grid.className = "calendar-grid day-view";
-  }
-
-
-  // CREATE EACH DATE CELL
-
-  dates.forEach(date => {
-
-    if (!date) {
-
-      const empty = document.createElement("div");
-      grid.appendChild(empty);
-
-      return;
-    }
-
-    const dateKey = formatDateKey(date);
-
-    const cell = document.createElement("button");
-
-    cell.type = "button";
-    cell.className = "calendar-cell";
-
-    if (dateKey === today()) {
-      cell.classList.add("today");
-    }
-
-    if (dateKey === selectedCalendarDate) {
-      cell.classList.add("selected");
-    }
-
-    if (date.getMonth() !== month && calendarView === "month") {
-      cell.classList.add("outside-month");
-    }
-
-    const dateLabel = document.createElement("span");
-
-    dateLabel.className = "calendar-cell-date";
-    dateLabel.textContent = date.getDate();
-
-    cell.appendChild(dateLabel);
-
-    const itemsContainer = document.createElement("div");
-    itemsContainer.className = "calendar-cell-items";
-
-    const items = getCalendarItems(dateKey);
-
-    items.slice(0, calendarView === "month" ? 3 : 8).forEach(item => {
-
-      const chip = document.createElement("span");
-
-      chip.className = `calendar-item-chip ${item.itemType}`;
-
-      const time = item.time ? item.time + " " : "";
-
-      chip.textContent = time + item.label;
-
-      itemsContainer.appendChild(chip);
-
-    });
-
-    if (items.length > (calendarView === "month" ? 3 : 8)) {
-
-      const more = document.createElement("span");
-
-      more.className = "calendar-more";
-      more.textContent = `+${items.length - (calendarView === "month" ? 3 : 8)} more`;
-
-      itemsContainer.appendChild(more);
-
-    }
-
-    cell.appendChild(itemsContainer);
-
-    cell.addEventListener("click", () => {
-
-      selectedCalendarDate = dateKey;
-      calendarDate = new Date(date);
-
-      renderCalendar();
-      renderSelectedDay();
-
-    });
-
-    grid.appendChild(cell);
-
-  });
-
-
-  // Update selected date details
-
-  renderSelectedDay();
-
-}
-
-
-// DISPLAY EVENTS AND TASKS FOR SELECTED DATE
-
-function renderSelectedDay() {
-
-  const heading = document.getElementById("selected-day-heading");
-  const container = document.getElementById("selected-day-events");
-
-  if (!heading || !container) return;
-
-  heading.textContent = formatCalendarDate(selectedCalendarDate);
-
-  const items = getCalendarItems(selectedCalendarDate);
-
-  if (!items.length) {
-
-    container.innerHTML = `
-      <p class="calendar-empty">
-        Nothing planned for this day yet. Enjoy the breathing space.
-      </p>
-    `;
-
-    return;
-  }
-
-  container.innerHTML = `
-    <div class="selected-day-list">
-      ${items.map(item => {
-
-        const time = item.time ? item.time : "No time set";
-
-        return `
-          <div class="selected-day-item">
-
-            <span class="selected-day-marker ${item.itemType}"></span>
-
-            <div class="selected-day-content">
-              <strong>${escapeHTML(item.label)}</strong>
-              <small>
-                ${escapeHTML(item.itemType.charAt(0).toUpperCase() + item.itemType.slice(1))}
-                · ${escapeHTML(time)}
-                ${item.done ? " · Completed" : ""}
-              </small>
-            </div>
-
-            ${
-              item.itemType !== "task"
-              ? `<button
-                  type="button"
-                  class="calendar-delete"
-                  data-event-delete="${escapeHTML(item.id)}"
-                  aria-label="Delete event"
-                >×</button>`
-              : ""
-            }
-
-          </div>
-        `;
-
-      }).join("")}
-    </div>
-  `;
-
-}
-
-
-// ADD A NEW EVENT
-
-document.getElementById("event-form").addEventListener("submit", event => {
-
-  event.preventDefault();
-
-  const title = document.getElementById("event-title").value.trim();
-  const date = document.getElementById("event-date").value;
-  const time = document.getElementById("event-time").value;
-  const type = document.getElementById("event-type").value;
-
-  if (!title || !date) {
-    toast("Please enter an event name and date.");
-    return;
-  }
-
-  data.events = data.events || [];
-
-  data.events.push({
-    id: uid(),
-    title,
-    date,
-    time,
-    type
-  });
-
-  selectedCalendarDate = date;
-  calendarDate = parseLocalDate(date);
-
-  saveData();
-
-  renderCalendar();
-
-  document.getElementById("event-title").value = "";
-  document.getElementById("event-time").value = "";
-  document.getElementById("event-date").value = date;
-
-  toast("Event saved");
-
-});
-
-
-// DELETE AN EVENT
-
-document.addEventListener("click", event => {
-
-  const deleteButton = event.target.closest("[data-event-delete]");
-
-  if (!deleteButton) return;
-
-  const eventId = deleteButton.dataset.eventDelete;
-
-  data.events = (data.events || []).filter(item => item.id !== eventId);
-
-  saveData();
-
-  renderCalendar();
-
-  toast("Event deleted");
-
-});
-
-
-// SWITCH BETWEEN MONTH, WEEK AND DAY
-
-document.querySelectorAll("[data-calendar-view]").forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    calendarView = button.dataset.calendarView;
-
-    document.querySelectorAll("[data-calendar-view]").forEach(viewButton => {
-      viewButton.classList.toggle(
-        "active",
-        viewButton.dataset.calendarView === calendarView
-      );
-    });
-
-    renderCalendar();
-
-  });
-
-});
-
-
-// PREVIOUS MONTH, WEEK OR DAY
-
-document.getElementById("prev-period").addEventListener("click", () => {
-
-  if (calendarView === "month") {
-    calendarDate.setMonth(calendarDate.getMonth() - 1);
-  }
-
-  if (calendarView === "week") {
-    calendarDate.setDate(calendarDate.getDate() - 7);
-  }
-
-  if (calendarView === "day") {
-    calendarDate.setDate(calendarDate.getDate() - 1);
-  }
-
-  selectedCalendarDate = formatDateKey(calendarDate);
-
-  renderCalendar();
-
-});
-
-
-// NEXT MONTH, WEEK OR DAY
-
-document.getElementById("next-period").addEventListener("click", () => {
-
-  if (calendarView === "month") {
-    calendarDate.setMonth(calendarDate.getMonth() + 1);
-  }
-
-  if (calendarView === "week") {
-    calendarDate.setDate(calendarDate.getDate() + 7);
-  }
-
-  if (calendarView === "day") {
-    calendarDate.setDate(calendarDate.getDate() + 1);
-  }
-
-  selectedCalendarDate = formatDateKey(calendarDate);
-
-  renderCalendar();
-
-});
-
-
-// JUMP BACK TO TODAY
-
-document.getElementById("calendar-today").addEventListener("click", () => {
-
-  calendarDate = new Date();
-  selectedCalendarDate = today();
-
-  renderCalendar();
-
-});
-
-
-// SET DEFAULT EVENT DATE
-
-document.getElementById("event-date").value = today();
-
-
-// FIRST CALENDAR DISPLAY
-
-renderCalendar();

@@ -91,98 +91,46 @@
         </article>
       </section>
 
-      <!-- CALENDAR PAGE -->
 
-<section class="view" id="calendar-view">
-
-  <div class="page-intro">
-    <p class="eyebrow">YOUR TIME, YOUR WAY</p>
-    <h1>My Calendar<span class="period">.</span></h1>
-    <p class="subheading">Keep track of the little and big things.</p>
-  </div>
-
-  <!-- CALENDAR CONTROLS -->
-
-  <article class="panel calendar-panel">
-
-    <div class="calendar-toolbar">
-
-      <div class="calendar-navigation">
-        <button type="button" id="prev-period" aria-label="Previous period">‹</button>
-        <h2 id="calendar-heading">Month Year</h2>
-        <button type="button" id="next-period" aria-label="Next period">›</button>
-      </div>
-
-      <div class="calendar-actions">
-        <button type="button" id="calendar-today" class="calendar-today-button">
-          Today
-        </button>
-
-        <div class="calendar-view-switch">
-          <button type="button" data-calendar-view="month" class="active">Month</button>
-          <button type="button" data-calendar-view="week">Week</button>
-          <button type="button" data-calendar-view="day">Day</button>
+      <section class="view" id="calendar-view">
+        <div class="page-intro"><p class="eyebrow">MAKE ROOM FOR WHAT MATTERS</p><h1>My calendar<span class="period">.</span></h1><p class="subheading">Appointments, birthdays, reminders and tasks in one place.</p></div>
+        <article class="panel calendar-panel">
+          <div class="calendar-toolbar">
+            <div class="calendar-period-controls">
+              <button class="calendar-icon-button" id="calendar-prev" type="button" aria-label="Previous period">‹</button>
+              <button class="calendar-icon-button" id="calendar-next" type="button" aria-label="Next period">›</button>
+              <h2 id="calendar-heading">Month</h2>
+            </div>
+            <div class="calendar-toolbar-actions">
+              <div class="calendar-view-switch" role="group" aria-label="Calendar view">
+                <button type="button" class="calendar-view-button active" data-calendar-view="month">Month</button>
+                <button type="button" class="calendar-view-button" data-calendar-view="week">Week</button>
+                <button type="button" class="calendar-view-button" data-calendar-view="day">Day</button>
+              </div>
+              <button class="calendar-today-button" id="calendar-today" type="button">Today</button>
+            </div>
+          </div>
+          <div class="calendar-legend">
+            <span><i class="legend-dot appointment"></i>Appointment</span><span><i class="legend-dot birthday"></i>Birthday</span><span><i class="legend-dot reminder"></i>Reminder</span><span><i class="legend-dot task"></i>Task</span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid" aria-live="polite"></div>
+        </article>
+        <div class="calendar-lower-grid">
+          <article class="panel calendar-event-panel">
+            <div class="panel-heading"><div><p class="eyebrow">ADD TO YOUR CALENDAR</p><h2>New event</h2></div><span class="leaf-mark">✳</span></div>
+            <form id="event-form" class="event-form">
+              <label>Event name<input id="event-title" maxlength="100" placeholder="e.g. Dentist appointment" required></label>
+              <div class="event-form-row"><label>Date<input id="event-date" type="date" required></label><label>Time <span class="muted">(optional)</span><input id="event-time" type="time"></label></div>
+              <label>Type<select id="event-type"><option value="appointment">Appointment</option><option value="birthday">Birthday</option><option value="reminder">Reminder</option></select></label>
+              <button class="primary-button" type="submit">Save event +</button>
+            </form>
+          </article>
+          <article class="panel selected-day-panel">
+            <div class="panel-heading"><div><p class="eyebrow">YOUR SELECTED DATE</p><h2 id="selected-day-heading">Events and tasks</h2></div></div>
+            <div id="selected-day-events" class="selected-day-events"><p class="empty-hint">Choose a date to see what's planned.</p></div>
+          </article>
         </div>
-      </div>
-
-    </div>
-
-    <!-- COLOUR KEY -->
-
-    <div class="calendar-legend">
-      <span><i class="legend-dot appointment-dot"></i> Appointment</span>
-      <span><i class="legend-dot birthday-dot"></i> Birthday</span>
-      <span><i class="legend-dot reminder-dot"></i> Reminder</span>
-      <span><i class="legend-dot task-dot"></i> Task</span>
-    </div>
-
-    <!-- CALENDAR GRID -->
-
-    <div id="calendar-grid" class="calendar-grid"></div>
-
-  </article>
-
-  <!-- ADD EVENT FORM -->
-
-  <article class="panel calendar-form-panel">
-
-    <div class="panel-heading">
-      <div>
-        <p class="eyebrow">MAKE A NOTE</p>
-        <h2>Add an event</h2>
-      </div>
-    </div>
-
-    <form id="event-form" class="event-form">
-
-      <input type="text" id="event-title" placeholder="Event name..." maxlength="100" required>
-      <input type="date" id="event-date" required>
-      <input type="time" id="event-time" aria-label="Event time">
-
-      <select id="event-type" aria-label="Event type">
-        <option value="appointment">Appointment</option>
-        <option value="birthday">Birthday</option>
-        <option value="reminder">Reminder</option>
-      </select>
-
-      <button type="submit" class="primary-button">
-        Save event +
-      </button>
-    </form>
-  </article>
-
-  <!-- SELECTED DATE DETAILS -->
-
-  <article class="panel selected-day-panel">
-    <div class="panel-heading">
-      <div>
-        <p class="eyebrow">YOUR PLANS</p>
-        <h2 id="selected-day-heading">Selected date</h2>
-      </div>
-    </div>
-    <div id="selected-day-events"></div>
-  </article>
-</section>
+      </section>
 
       <section class="view" id="habits-view">
         <div class="page-intro"><p class="eyebrow">SHOW UP FOR YOURSELF</p><h1>My habits<span class="period">.</span></h1><p class="subheading">Small actions, repeated with care.</p></div>
