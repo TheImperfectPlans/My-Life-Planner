@@ -24,6 +24,7 @@
         <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
         <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
         <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
+        <button class="nav-link" data-view="daily"><span>*</span> Daily Planner</button>
       </nav>
       <div class="sidebar-bottom">
         <div class="offline-indicator"><span class="status-dot"></span><span id="connection-label">Ready to plan</span></div>
@@ -131,6 +132,119 @@
           </article>
         </div>
       </section>
+
+     <!-- DAILY PLANNER -->
+<section class="view" id="daily-view">
+
+  <div class="page-intro">
+    <p class="eyebrow">ONE DAY AT A TIME</p>
+    <h1>Daily Planner<span class="period">.</span></h1>
+    <p class="subheading">A little structure for a more intentional day.</p>
+  </div>
+
+  <div class="daily-date-panel panel">
+    <label for="daily-date">Choose your day</label>
+    <input type="date" id="daily-date">
+    <button class="secondary-button" id="daily-today" type="button">
+      Back to today
+    </button>
+  </div>
+
+  <!-- TOP THREE PRIORITIES -->
+  <div class="panel daily-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">FOCUS ON WHAT MATTERS</p>
+        <h2>My top three priorities</h2>
+      </div>
+      <span class="leaf-mark">✳</span>
+    </div>
+
+    <div class="daily-priorities">
+      <input id="priority-1" placeholder="Priority one...">
+      <input id="priority-2" placeholder="Priority two...">
+      <input id="priority-3" placeholder="Priority three...">
+    </div>
+  </div>
+
+  <!-- DAILY SCHEDULE -->
+  <div class="panel daily-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">PLAN YOUR TIME</p>
+        <h2>My daily schedule</h2>
+      </div>
+    </div>
+
+    <form id="schedule-form" class="daily-form">
+      <input type="time" id="schedule-time" required>
+      <input type="text" id="schedule-activity"
+        placeholder="What are you doing?" required>
+      <button type="submit" class="primary-button">Add</button>
+    </form>
+
+    <div id="daily-schedule-list"></div>
+  </div>
+
+  <!-- TODAY'S TASKS -->
+  <div class="panel daily-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">THINGS TO GET DONE</p>
+        <h2>My tasks</h2>
+      </div>
+    </div>
+
+    <div id="daily-tasks-list"></div>
+  </div>
+
+  <!-- DAILY HABITS -->
+  <div class="panel daily-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">SMALL DAILY ACTIONS</p>
+        <h2>My habits</h2>
+      </div>
+    </div>
+
+    <div id="daily-habits-list"></div>
+  </div>
+
+  <!-- DAILY REFLECTION -->
+  <div class="panel daily-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">PAUSE AND REFLECT</p>
+        <h2>My daily reflection</h2>
+      </div>
+    </div>
+
+    <div class="daily-reflection">
+      <label>
+        What went well today?
+        <textarea id="reflection-well"
+          placeholder="Something I'm proud of..."></textarea>
+      </label>
+
+      <label>
+        What was challenging?
+        <textarea id="reflection-challenge"
+          placeholder="Something I found difficult..."></textarea>
+      </label>
+
+      <label>
+        What am I grateful for?
+        <textarea id="reflection-grateful"
+          placeholder="Today I'm grateful for..."></textarea>
+      </label>
+    </div>
+
+    <p class="daily-save-status" id="daily-save-status">
+      Your entries save automatically.
+    </p>
+  </div>
+
+</section>
 
       <section class="view" id="habits-view">
         <div class="page-intro"><p class="eyebrow">SHOW UP FOR YOURSELF</p><h1>My habits<span class="period">.</span></h1><p class="subheading">Small actions, repeated with care.</p></div>
