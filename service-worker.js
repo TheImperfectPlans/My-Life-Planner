@@ -1,4 +1,4 @@
-const CACHE_NAME = "my-life-planner-v1";
+const CACHE_NAME = "my-life-planner-v2";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
