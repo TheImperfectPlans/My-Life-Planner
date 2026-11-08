@@ -28,3 +28,142 @@
 .period-day-heading{border:0;background:transparent;text-align:left;color:#6e7565;font-size:11px;padding:2px 0}.period-day-items{display:grid;align-content:start;gap:6px}.selected-period-day{min-height:220px;border:0;padding:18px}.selected-period-day .calendar-item{max-width:500px}
 @media(max-width:800px){.calendar-lower-grid{grid-template-columns:1fr}.calendar-day{min-height:78px;padding:4px}.calendar-day .calendar-item{font-size:8px}.week-grid{grid-template-columns:1fr}.period-day{min-height:100px;border-right:0;border-bottom:1px solid var(--line)}}
 @media(max-width:520px){.calendar-panel{padding:12px}.calendar-toolbar{align-items:flex-start}.calendar-period-controls h2{min-width:0;font-size:18px}.calendar-toolbar-actions{width:100%;justify-content:space-between}.calendar-legend{gap:9px;font-size:9px}.calendar-weekday{font-size:9px;padding:8px 1px}.calendar-day{min-height:62px;padding:3px}.calendar-day-number{width:20px;height:20px;font-size:9px}.calendar-day .calendar-item{font-size:0;padding:3px 0;height:5px;border-left-width:0}.calendar-day-items small{font-size:8px}.event-form-row{grid-template-columns:1fr}}
+/* ==================================
+   DAILY PLANNER
+================================== */
+
+.daily-date-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.daily-date-panel label {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.daily-date-panel input {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fffefa;
+  color: var(--ink);
+}
+
+.daily-panel {
+  padding: 22px;
+  margin-bottom: 17px;
+}
+
+.daily-priorities {
+  display: grid;
+  gap: 12px;
+}
+
+.daily-priorities input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #faf9f5;
+  color: var(--ink);
+  font: inherit;
+}
+
+.daily-form {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.daily-form input {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #faf9f5;
+  color: var(--ink);
+  font: inherit;
+}
+
+.daily-schedule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.daily-schedule-item button,
+.daily-delete-button {
+  border: 0;
+  background: transparent;
+  color: #a17c6c;
+  cursor: pointer;
+}
+
+.daily-task-item,
+.daily-habit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.daily-reflection {
+  display: grid;
+  gap: 17px;
+}
+
+.daily-reflection label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.daily-reflection textarea {
+  width: 100%;
+  min-height: 85px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #faf9f5;
+  color: var(--ink);
+  font: inherit;
+}
+
+.daily-save-status {
+  margin-top: 14px;
+  color: #89927e;
+  font-size: 10px;
+}
+
+.daily-empty {
+  color: #999486;
+  font-size: 12px;
+  padding: 10px 0;
+}
+
+@media(max-width:600px) {
+  .daily-form {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-date-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
