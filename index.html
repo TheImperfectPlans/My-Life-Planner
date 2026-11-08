@@ -23,6 +23,7 @@
         <button class="nav-link" data-view="habits"><span>◷</span> Habits</button>
         <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
         <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
+        <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
       </nav>
       <div class="sidebar-bottom">
         <div class="offline-indicator"><span class="status-dot"></span><span id="connection-label">Ready to plan</span></div>
@@ -89,6 +90,99 @@
           <div id="all-task-list" class="task-list large-list"></div><p id="all-task-empty" class="empty-hint">Nothing here yet. Add your first task above.</p>
         </article>
       </section>
+
+      <!-- CALENDAR PAGE -->
+
+<section class="view" id="calendar-view">
+
+  <div class="page-intro">
+    <p class="eyebrow">YOUR TIME, YOUR WAY</p>
+    <h1>My Calendar<span class="period">.</span></h1>
+    <p class="subheading">Keep track of the little and big things.</p>
+  </div>
+
+  <!-- CALENDAR CONTROLS -->
+
+  <article class="panel calendar-panel">
+
+    <div class="calendar-toolbar">
+
+      <div class="calendar-navigation">
+        <button type="button" id="prev-period" aria-label="Previous period">‹</button>
+        <h2 id="calendar-heading">Month Year</h2>
+        <button type="button" id="next-period" aria-label="Next period">›</button>
+      </div>
+
+      <div class="calendar-actions">
+        <button type="button" id="calendar-today" class="calendar-today-button">
+          Today
+        </button>
+
+        <div class="calendar-view-switch">
+          <button type="button" data-calendar-view="month" class="active">Month</button>
+          <button type="button" data-calendar-view="week">Week</button>
+          <button type="button" data-calendar-view="day">Day</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLOUR KEY -->
+
+    <div class="calendar-legend">
+      <span><i class="legend-dot appointment-dot"></i> Appointment</span>
+      <span><i class="legend-dot birthday-dot"></i> Birthday</span>
+      <span><i class="legend-dot reminder-dot"></i> Reminder</span>
+      <span><i class="legend-dot task-dot"></i> Task</span>
+    </div>
+
+    <!-- CALENDAR GRID -->
+
+    <div id="calendar-grid" class="calendar-grid"></div>
+
+  </article>
+
+  <!-- ADD EVENT FORM -->
+
+  <article class="panel calendar-form-panel">
+
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">MAKE A NOTE</p>
+        <h2>Add an event</h2>
+      </div>
+    </div>
+
+    <form id="event-form" class="event-form">
+
+      <input type="text" id="event-title" placeholder="Event name..." maxlength="100" required>
+      <input type="date" id="event-date" required>
+      <input type="time" id="event-time" aria-label="Event time">
+
+      <select id="event-type" aria-label="Event type">
+        <option value="appointment">Appointment</option>
+        <option value="birthday">Birthday</option>
+        <option value="reminder">Reminder</option>
+      </select>
+
+      <button type="submit" class="primary-button">
+        Save event +
+      </button>
+    </form>
+  </article>
+
+  <!-- SELECTED DATE DETAILS -->
+
+  <article class="panel selected-day-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">YOUR PLANS</p>
+        <h2 id="selected-day-heading">Selected date</h2>
+      </div>
+    </div>
+    <div id="selected-day-events"></div>
+  </article>
+</section>
 
       <section class="view" id="habits-view">
         <div class="page-intro"><p class="eyebrow">SHOW UP FOR YOURSELF</p><h1>My habits<span class="period">.</span></h1><p class="subheading">Small actions, repeated with care.</p></div>
