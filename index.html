@@ -19,6 +19,7 @@
       </a>
       <nav class="main-nav" aria-label="Main navigation">
         <button class="nav-link active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-link" data-view="day"><span>◫</span> Day planner</button>
         <button class="nav-link" data-view="tasks"><span>☷</span> My tasks</button>
         <button class="nav-link" data-view="habits"><span>◷</span> Habits</button>
         <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
@@ -35,7 +36,7 @@
       <header class="topbar">
         <button class="mobile-menu" id="menu-toggle" aria-label="Open navigation">☰</button>
         <div class="breadcrumb">YOUR PERSONAL SPACE <span>/</span> <b id="section-name">DASHBOARD</b></div>
-        <div class="topbar-right"><span class="today-chip" id="top-date"></span><span class="avatar">M</span></div>
+        <div class="topbar-right"><span class="save-status" id="save-status" role="status" aria-live="polite" data-state="saved">✓ Saved</span><span class="today-chip" id="top-date"></span><span class="avatar">M</span></div>
       </header>
 
       <section class="view active-view" id="dashboard-view">
@@ -52,6 +53,15 @@
         </div>
 
         <div class="content-grid">
+          <article class="panel plan-panel">
+            <div class="panel-heading"><div><p class="eyebrow">TODAY AT A GLANCE</p><h2>Today's plan</h2></div><button class="text-button" id="plan-open-today" type="button">Open today's planner ↗</button></div>
+            <div class="plan-cols">
+              <div><p class="eyebrow">THREE PRIORITIES</p><ul class="plan-list" id="plan-priorities"></ul></div>
+              <div><p class="eyebrow">TIMETABLE</p><ul class="plan-list wide" id="plan-blocks"></ul></div>
+              <div><p class="eyebrow">EVENTS &amp; APPOINTMENTS</p><ul class="plan-list" id="plan-events"></ul></div>
+            </div>
+          </article>
+
           <article class="panel tasks-panel">
             <div class="panel-heading"><div><p class="eyebrow">YOUR PRIORITIES</p><h2>Today's tasks</h2></div><button class="text-button" data-go="tasks">View all ↗</button></div>
             <form id="quick-task-form" class="quick-add"><input id="quick-task-input" maxlength="100" placeholder="What needs your attention?" aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
@@ -126,9 +136,95 @@
             </form>
           </article>
           <article class="panel selected-day-panel">
-            <div class="panel-heading"><div><p class="eyebrow">YOUR SELECTED DATE</p><h2 id="selected-day-heading">Events and tasks</h2></div></div>
+            <div class="panel-heading"><div><p class="eyebrow">YOUR SELECTED DATE</p><h2 id="selected-day-heading">Events and tasks</h2></div><button class="text-button" id="open-planner-from-calendar" type="button">Open day planner ↗</button></div>
             <div id="selected-day-events" class="selected-day-events"><p class="empty-hint">Choose a date to see what's planned.</p></div>
           </article>
+        </div>
+      </section>
+
+<section class="view" id="day-view">
+        <div class="day-header">
+          <div><p class="eyebrow" id="day-eyebrow"></p><h1 id="day-title"></h1></div>
+          <div class="day-nav">
+            <button class="text-button" id="day-back" type="button">← Calendar</button>
+            <button class="icon-button" id="day-prev" type="button" aria-label="Previous day">‹</button>
+            <input type="date" id="day-date-input" aria-label="Jump to date">
+            <button class="icon-button" id="day-next" type="button" aria-label="Next day">›</button>
+            <button class="text-button" id="day-today" type="button">Today</button>
+          </div>
+        </div>
+
+        <div class="planner-grid">
+          <div class="planner-col">
+            <article class="panel">
+              <div class="panel-heading"><div><p class="eyebrow">WHAT MATTERS MOST</p><h2>Three priorities</h2></div></div>
+              <div id="priority-list" class="priority-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading"><div><p class="eyebrow">SMALL DAILY RITUALS</p><h2>Habit checklist</h2></div><span class="muted" id="day-habit-progress"></span></div>
+              <div id="day-habit-list" class="habit-list"></div>
+              <p class="empty-hint" id="day-habit-empty">Add habits on the Habits page and they'll appear here every day.</p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading"><div><p class="eyebrow">DUE THIS DAY</p><h2>Tasks</h2></div></div>
+              <div id="day-task-list" class="task-list"></div>
+              <p class="empty-hint" id="day-task-empty">No tasks due on this day.</p>
+              <form id="day-task-form" class="mini-form">
+                <input id="day-task-input" class="grow" maxlength="100" placeholder="Add a task for this day..." aria-label="New task for this day" required>
+                <button class="primary-button" type="submit">Add task +</button>
+              </form>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading"><div><p class="eyebrow">ON THE CALENDAR</p><h2>Events &amp; appointments</h2></div></div>
+              <div id="day-event-list" class="row-list"></div>
+              <p class="empty-hint" id="day-event-empty">Nothing scheduled for this day.</p>
+              <form id="dp-event-form" class="mini-form">
+                <input id="dp-event-title" class="grow" maxlength="100" placeholder="Add an event or appointment..." aria-label="Event name" required>
+                <select id="dp-event-type" aria-label="Type"><option value="appointment">Appointment</option><option value="birthday">Birthday</option><option value="reminder">Reminder</option></select>
+                <input type="time" id="dp-event-time" aria-label="Time (optional)">
+                <button class="primary-button" type="submit">Add +</button>
+              </form>
+              <p class="form-note">Leave the time empty for an all-day entry. Events here also appear on the calendar.</p>
+            </article>
+          </div>
+
+          <div class="planner-col">
+            <article class="panel">
+              <div class="panel-heading"><div><p class="eyebrow">SHAPE YOUR DAY</p><h2>Timetable</h2></div></div>
+              <div id="block-list" class="row-list"></div>
+              <p class="empty-hint" id="block-empty">No time blocks yet. Add one below, then edit it any time.</p>
+              <form id="block-form" class="mini-form">
+                <input type="time" id="block-start" value="09:00" aria-label="Block start" required>
+                <input type="time" id="block-end" value="10:00" aria-label="Block end">
+                <input id="block-title" class="grow" maxlength="80" placeholder="What happens in this block?" aria-label="Block title" required>
+                <select id="block-cat" aria-label="Category"><option value="work">Work</option><option value="personal">Personal</option><option value="care">Self-care</option><option value="other">Other</option></select>
+                <button class="primary-button" type="submit">Add block +</button>
+              </form>
+              <p class="form-note">Change any time, title or category in a block to edit it. Blocks re-sort by start time.</p>
+            </article>
+
+            <article class="panel gratitude-panel">
+              <div class="panel-heading"><div><p class="eyebrow">NOTICE THE GOOD</p><h2>Gratitude</h2></div><span class="leaf-mark">✿</span></div>
+              <div id="gratitude-list" class="priority-list"></div>
+            </article>
+
+            <article class="panel reflection-panel">
+              <div class="panel-heading"><div><p class="eyebrow">CLOSE THE DAY</p><h2>Daily reflection</h2></div><span class="leaf-mark">❧</span></div>
+              <p class="checkin-question">How did this day feel?</p>
+              <div class="mood-options" id="day-mood-options">
+                <button type="button" data-day-mood="Low" aria-label="Low mood">☁️</button><button type="button" data-day-mood="Okay" aria-label="Okay mood">🌿</button><button type="button" data-day-mood="Good" aria-label="Good mood">☀️</button><button type="button" data-day-mood="Great" aria-label="Great mood">🌼</button>
+              </div>
+              <div class="reflection-grid">
+                <label>What went well?<textarea id="refl-well" data-refl="well" rows="2" maxlength="600"></textarea></label>
+                <label>What was challenging?<textarea id="refl-hard" data-refl="hard" rows="2" maxlength="600"></textarea></label>
+                <label>One thing for tomorrow<textarea id="refl-tomorrow" data-refl="tomorrow" rows="2" maxlength="600"></textarea></label>
+              </div>
+              <span class="save-hint">Saved automatically on this device</span>
+            </article>
+          </div>
         </div>
       </section>
 
