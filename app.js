@@ -301,6 +301,8 @@ document.getElementById("event-form").addEventListener("submit", event => {
   const isMultiDay = endDate > date.value;
   data.events.push({id:uid(), title:title.value.trim(), date:date.value, endDate, time:document.getElementById("event-time").value, type:document.getElementById("event-type").value});
   selectedCalendarDate = date.value; calendarDate = new Date(date.value + "T12:00:00");
+  // Take the Daily Planner to the event's start date so the newly added event is immediately visible there.
+  dailySelectedDate = date.value;
   saveData(); renderCalendar(); renderDailyPlanner(); renderWeeklyReview(); title.value = ""; date.value = today(); endDateInput.value = ""; document.getElementById("event-time").value = "";
   toast(isMultiDay ? "Multi-day event saved" : "Event saved to your calendar");
 });
