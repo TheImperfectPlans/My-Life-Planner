@@ -18,14 +18,35 @@
         <span><strong>My Life Planner</strong><small>a little more intentional</small></span>
       </a>
       <nav class="main-nav" aria-label="Main navigation">
-        <button class="nav-link active" data-view="dashboard"><span>⌂</span> Dashboard</button>
-        <button class="nav-link" data-view="tasks"><span>☷</span> My tasks</button>
-        <button class="nav-link" data-view="habits"><span>◷</span> Habits</button>
-        <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
-        <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
-        <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
-        <button class="nav-link" data-view="daily"><span>☀</span> Daily Planner</button>
-        <button class="nav-link" data-view="weekly"><span>▧</span> Weekly Review</button>
+        <div class="nav-group"><span class="nav-group-label">MY DAY</span>
+          <button class="nav-link active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+          <button class="nav-link" data-view="daily"><span>☀</span> Daily Planner</button>
+        </div>
+        <div class="nav-group"><span class="nav-group-label">MY PLANNING</span>
+          <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
+          <button class="nav-link" data-view="monthly"><span>▤</span> Monthly Planner</button>
+          <button class="nav-link" data-view="tasks"><span>☷</span> My tasks</button>
+          <button class="nav-link" data-view="weekly"><span>▧</span> Weekly Review</button>
+          <button class="nav-link" data-view="yearly"><span>▦</span> Year at a glance</button>
+        </div>
+        <div class="nav-group"><span class="nav-group-label">MY LIFE</span>
+          <button class="nav-link" data-view="home"><span>⌂</span> Home Management</button>
+          <button class="nav-link" data-view="projects"><span>▣</span> Projects</button>
+          <button class="nav-link" data-view="collections"><span>☷</span> Lists & Collections</button>
+        </div>
+        <div class="nav-group"><span class="nav-group-label">MY WELLBEING</span>
+          <button class="nav-link" data-view="wellness"><span>❀</span> Food, Fitness & Wellness</button>
+          <button class="nav-link" data-view="routines"><span>◷</span> Routines</button>
+        </div>
+        <div class="nav-group"><span class="nav-group-label">MY GROWTH</span>
+          <button class="nav-link" data-view="habits"><span>◷</span> Habits</button>
+          <button class="nav-link" data-view="goals"><span>✳</span> Goals</button>
+          <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
+          <button class="nav-link" data-view="finance"><span>＄</span> Finance</button>
+          <button class="nav-link" data-view="travel"><span>⌁</span> Travel</button>
+          <button class="nav-link" data-view="focus"><span>◴</span> Focus Timer</button>
+          <button class="nav-link" data-view="backup"><span>↥</span> Backup & Settings</button>
+        </div>
       </nav>
       <div class="sidebar-bottom">
         <div class="offline-indicator"><span class="status-dot"></span><span id="connection-label">Ready to plan</span></div>
@@ -37,7 +58,7 @@
       <header class="topbar">
         <button class="mobile-menu" id="menu-toggle" aria-label="Open navigation">☰</button>
         <div class="breadcrumb">YOUR PERSONAL SPACE <span>/</span> <b id="section-name">DASHBOARD</b></div>
-        <div class="topbar-right"><span class="today-chip" id="top-date"></span><span class="avatar">M</span></div>
+        <div class="topbar-right"><input id="global-search" class="global-search" type="search" placeholder="Search planner…" aria-label="Search planner"><button class="topbar-action" id="quick-add-global" type="button">＋ Quick add</button><button class="topbar-action" data-go="backup" type="button">Backup</button><span class="today-chip" id="top-date"></span><span class="avatar">M</span></div>
       </header>
 
       <section class="view active-view" id="dashboard-view">
@@ -51,22 +72,23 @@
           <article class="stat-card"><div class="stat-icon sage">☷</div><div><span>Tasks for today</span><strong id="task-count">0</strong><small>Keep it simple</small></div></article>
           <article class="stat-card"><div class="stat-icon clay">◷</div><div><span>Habits completed</span><strong id="habit-count">0 / 3</strong><small>A little consistency</small></div></article>
           <article class="stat-card"><div class="stat-icon sand">✳</div><div><span>Goals in progress</span><strong id="goal-count">0</strong><small>One step at a time</small></div></article>
+          <article class="stat-card"><div class="stat-icon clay">▧</div><div><span>Tasks this week</span><strong id="week-task-count">0 / 0</strong><small id="week-task-caption">Your weekly rhythm</small></div></article>
         </div>
 
         <div class="content-grid">
-          <article class="panel tasks-panel">
+          <article class="panel tasks-panel" data-dashboard-card="tasks">
             <div class="panel-heading"><div><p class="eyebrow">YOUR PRIORITIES</p><h2>Today's tasks</h2></div><button class="text-button" data-go="tasks">View all ↗</button></div>
             <form id="quick-task-form" class="quick-add"><input id="quick-task-input" maxlength="100" placeholder="What needs your attention?" aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
             <div id="today-task-list" class="task-list"></div>
             <p class="empty-hint" id="task-empty">Your list is clear. Add one small thing to get started.</p>
           </article>
 
-          <article class="panel habits-panel">
+          <article class="panel habits-panel" data-dashboard-card="habits">
             <div class="panel-heading"><div><p class="eyebrow">SMALL DAILY RITUALS</p><h2>Daily habits</h2></div><button class="text-button" data-go="habits">Manage ↗</button></div>
             <div id="dashboard-habits" class="habit-list"></div>
           </article>
 
-          <article class="panel focus-panel">
+          <article class="panel focus-panel" data-dashboard-card="checkin">
             <div class="panel-heading"><div><p class="eyebrow">A MOMENT FOR YOU</p><h2>Daily check-in</h2></div><span class="leaf-mark">❧</span></div>
             <p class="checkin-question">How are you feeling today?</p>
             <div class="mood-options" id="mood-options">
@@ -75,7 +97,12 @@
             <p class="mood-feedback" id="mood-feedback">There is no right or wrong answer.</p>
           </article>
 
-          <article class="panel intention-panel">
+          <article class="panel upcoming-panel" data-dashboard-card="upcoming">
+            <div class="panel-heading"><div><p class="eyebrow">COMING UP</p><h2>Upcoming events</h2></div><button class="text-button" data-go="calendar">Calendar ↗</button></div>
+            <div id="dashboard-upcoming" class="dashboard-upcoming-list"></div>
+          </article>
+
+          <article class="panel intention-panel" data-dashboard-card="intention">
             <p class="eyebrow">TODAY'S INTENTION</p><h2>What would make today feel meaningful?</h2>
             <textarea id="intention-input" rows="3" maxlength="240" placeholder="Today, I want to make space for..."></textarea>
             <span class="save-hint" id="intention-status">Saved on this device</span>
@@ -87,7 +114,8 @@
       <section class="view" id="tasks-view">
         <div class="page-intro"><p class="eyebrow">CLEAR YOUR MIND</p><h1>My tasks<span class="period">.</span></h1><p class="subheading">Gather everything in one place.</p></div>
         <article class="panel">
-          <form id="task-form" class="task-entry"><input id="task-input" maxlength="100" placeholder="Add a task..." aria-label="Task name" required><input id="task-date" type="date" aria-label="Due date"><button class="primary-button" type="submit">Add task +</button></form>
+          <form id="task-form" class="task-entry task-entry-expanded"><input id="task-input" maxlength="100" placeholder="Add a task..." aria-label="Task name" required><input id="task-date" type="date" aria-label="Due date"><label class="task-repeat-field">Repeat<select id="task-repeat" aria-label="Repeat task"><option value="none">Never</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></label><label class="task-repeat-field">Until<input id="task-repeat-until" type="date" aria-label="Repeat until"></label><button class="primary-button" type="submit">Add task +</button></form>
+          <p class="form-helper">For a repeating task, choose a due date, frequency and final repeat date.</p>
           <div class="filter-row"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="open">To do</button><button class="filter" data-filter="done">Completed</button></div>
           <div id="all-task-list" class="task-list large-list"></div><p id="all-task-empty" class="empty-hint">Nothing here yet. Add your first task above.</p>
         </article>
@@ -125,6 +153,8 @@
               <div class="event-form-row"><label>Start date<input id="event-date" type="date" required></label><label>End date <span class="muted">(optional)</span><input id="event-end-date" type="date"></label></div>
               <label>Time <span class="muted">(optional)</span><input id="event-time" type="time"></label>
               <label>Type<select id="event-type"><option value="appointment">Appointment</option><option value="birthday">Birthday</option><option value="reminder">Reminder</option></select></label>
+              <label>Repeat<select id="event-repeat"><option value="none">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option><option value="yearly">Every year</option></select></label>
+              <label>Repeat until <span class="muted">(required for repeating events)</span><input id="event-repeat-until" type="date"></label>
               <button class="primary-button" type="submit">Save event +</button>
             </form>
           </article>
@@ -134,6 +164,14 @@
           </article>
         </div>
       </section>
+
+<section class="view" id="monthly-view"><div class="page-intro"><p class="eyebrow">ZOOM OUT & SEE THE BIGGER PICTURE</p><h1>Monthly Planner<span class="period">.</span></h1><p class="subheading">Set an intention, choose your priorities and see what's ahead.</p></div>
+<article class="panel monthly-date-panel"><button class="calendar-icon-button" id="monthly-prev" type="button" aria-label="Previous month">‹</button><label for="monthly-date">Choose month</label><input id="monthly-date" type="month"><button class="calendar-icon-button" id="monthly-next" type="button" aria-label="Next month">›</button><button class="secondary-button" id="monthly-today" type="button">This month</button><strong id="monthly-range-label"></strong></article>
+<article class="panel weekly-overview-panel"><div class="panel-heading"><div><p class="eyebrow">THE WEEK AHEAD</p><h2>Weekly overview</h2></div><span class="muted">Tasks and events by day</span></div><div id="weekly-overview-grid" class="weekly-overview-grid"></div></article>
+        <div class="weekly-stats-grid"><article class="stat-card"><div class="stat-icon sage">✓</div><div><span>Tasks completed</span><strong id="monthly-completed">0</strong><small id="monthly-task-total">0 tasks scheduled</small></div></article><article class="stat-card"><div class="stat-icon clay">▦</div><div><span>Calendar events</span><strong id="monthly-event-total">0</strong><small>Across this month</small></div></article><article class="stat-card"><div class="stat-icon sand">✳</div><div><span>Planned days</span><strong id="monthly-busy-days">0</strong><small>With tasks or events</small></div></article></div>
+<article class="panel monthly-panel"><div class="panel-heading"><div><p class="eyebrow">YOUR MONTHLY INTENTION</p><h2>What matters this month?</h2></div></div><label class="monthly-field">My focus<textarea id="monthly-focus" rows="2" maxlength="300" placeholder="This month, I want to focus on..."></textarea></label><div class="monthly-priorities"><label>Priority one<input id="monthly-priority-1" maxlength="140" placeholder="First priority..."></label><label>Priority two<input id="monthly-priority-2" maxlength="140" placeholder="Second priority..."></label><label>Priority three<input id="monthly-priority-3" maxlength="140" placeholder="Third priority..."></label></div></article>
+<div class="monthly-columns"><article class="panel monthly-panel"><div class="panel-heading"><div><p class="eyebrow">WHAT'S COMING UP</p><h2>Monthly events</h2></div></div><div id="monthly-events-list"></div></article><article class="panel monthly-panel"><div class="panel-heading"><div><p class="eyebrow">MAKE IT HAPPEN</p><h2>Tasks this month</h2></div></div><div id="monthly-tasks-list"></div></article></div>
+<article class="panel monthly-panel"><div class="panel-heading"><div><p class="eyebrow">PAUSE & REFLECT</p><h2>Looking back and ahead</h2></div></div><div class="daily-reflection"><label>Monthly wins<textarea id="monthly-wins" rows="3" maxlength="1500" placeholder="What went well this month?"></textarea></label><label>Carry forward<textarea id="monthly-carry" rows="3" maxlength="1500" placeholder="What would you like to carry into next month?"></textarea></label></div><p class="daily-save-status" id="monthly-save-status">Your monthly plan saves automatically.</p></article></section>
 
       <section class="view" id="daily-view">
         <div class="page-intro"><p class="eyebrow">ONE DAY AT A TIME</p><h1>Daily Planner<span class="period">.</span></h1><p class="subheading">A little structure for a more intentional day.</p></div>
@@ -206,6 +244,26 @@
           <p class="daily-save-status" id="weekly-save-status">Your review saves automatically on this device.</p>
         </article>
       </section>
+
+
+<section class="view" id="home-view"><div class="page-intro"><p class="eyebrow">CARE FOR YOUR SPACE</p><h1>Home Management<span class="period">.</span></h1><p class="subheading">Keep the everyday running smoothly, one small step at a time.</p></div><div class="life-grid">
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">PLAN AHEAD</p><h2>Meal planner</h2></div></div><form id="meal-form" class="life-form"><label>Day<input id="meal-day" type="date" required></label><label>Meal<select id="meal-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></label><label>What are you having?<input id="meal-name" maxlength="120" placeholder="e.g. Vegetable stir-fry" required></label><label>Ingredients (optional, comma-separated)<input id="meal-ingredients" maxlength="300" placeholder="e.g. rice, carrots, chicken"></label><button class="primary-button" type="submit">Add meal +</button></form><div id="meal-list" class="life-list"></div></article>
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">DON'T FORGET A THING</p><h2>Grocery list</h2></div></div><form id="grocery-form" class="life-form inline-life-form"><input id="grocery-name" maxlength="100" placeholder="Add an item..." required><button class="primary-button" type="submit">Add +</button></form><div id="grocery-list" class="life-list"></div></article>
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">A LITTLE ROUTINE</p><h2>Cleaning schedule</h2></div></div><form id="cleaning-form" class="life-form"><label>Chore<input id="cleaning-name" maxlength="100" placeholder="e.g. Clean bathroom" required></label><label>How often?<select id="cleaning-frequency"><option>Daily</option><option>Weekly</option><option>Fortnightly</option><option>Monthly</option></select></label><button class="primary-button" type="submit">Add chore +</button></form><div id="cleaning-list" class="life-list"></div></article></div><article class="panel home-record-panel"><div class="panel-heading"><div><p class="eyebrow">KEEP HOUSEHOLD DETAILS HANDY</p><h2>Home inventory, maintenance & contacts</h2></div></div><form id="home-record-form" class="life-form home-record-form"><label>Record type<select id="home-record-type"><option>Inventory</option><option>Maintenance</option><option>Important contact</option></select></label><label>Item / name<input id="home-record-name" maxlength="120" placeholder="e.g. Air conditioner filter / Plumber" required></label><label>Due date or reminder<input id="home-record-date" type="date"></label><label>Details<input id="home-record-details" maxlength="240" placeholder="Location, phone number, notes..."></label><button class="primary-button" type="submit">Save household detail +</button></form><div id="home-record-list" class="life-list"></div></article></section>
+<section class="view" id="projects-view"><div class="page-intro"><p class="eyebrow">MAKE PROGRESS VISIBLE</p><h1>My Projects<span class="period">.</span></h1><p class="subheading">Give your bigger ideas a home, with clear next steps.</p></div><article class="panel"><form id="project-form" class="life-form project-form"><label>Project name<input id="project-name" maxlength="120" placeholder="e.g. Launch my website" required></label><label>Target date<input id="project-date" type="date"></label><label>First next step<input id="project-next" maxlength="160" placeholder="What's the next action?"></label><button class="primary-button" type="submit">Create project +</button></form><div id="project-list" class="project-list"></div><p id="project-empty" class="empty-hint">Your projects will appear here.</p></article></section>
+<section class="view" id="collections-view"><div class="page-intro"><p class="eyebrow">KEEP IDEAS IN ONE PLACE</p><h1>Lists & Collections<span class="period">.</span></h1><p class="subheading">Create your own lists for anything you want to keep track of.</p></div><article class="panel"><form id="collection-form" class="life-form inline-life-form"><input id="collection-name" maxlength="100" placeholder="Name your list (e.g. Books to read)" required><button class="primary-button" type="submit">Create list +</button></form><div id="collection-list" class="collection-grid"></div><p id="collection-empty" class="empty-hint">Create a list to get started — shopping, gifts, books, travel ideas, anything.</p></article></section>
+<section class="view" id="wellness-view"><div class="page-intro"><p class="eyebrow">LOOK AFTER YOURSELF</p><h1>Food, Fitness & Wellness<span class="period">.</span></h1><p class="subheading">A gentle place to notice your routines and wellbeing.</p></div><article class="panel wellness-date-panel"><label for="wellness-date">Check-in date</label><input id="wellness-date" type="date"></article><div class="life-grid">
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">NOURISH YOURSELF</p><h2>Food log</h2></div></div><form id="food-form" class="life-form"><label>Meal<select id="food-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></label><label>What did you have?<input id="food-name" maxlength="140" placeholder="Add a meal or snack" required></label><button class="primary-button" type="submit">Log food +</button></form><div id="food-list" class="life-list"></div></article>
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">MOVE IN A WAY YOU ENJOY</p><h2>Fitness log</h2></div></div><form id="workout-form" class="life-form"><label>Activity<input id="workout-name" maxlength="120" placeholder="e.g. Strength session" required></label><label>Duration in minutes<input id="workout-duration" type="number" min="1" max="600" placeholder="30"></label><button class="primary-button" type="submit">Log activity +</button></form><div id="workout-list" class="life-list"></div></article>
+<article class="panel wellness-panel"><div class="panel-heading"><div><p class="eyebrow">HOW ARE YOU FEELING?</p><h2>Wellness check-in</h2></div></div><div class="wellness-fields"><label>Mood<select id="wellness-mood"><option value="">Choose...</option><option>Low</option><option>Okay</option><option>Good</option><option>Great</option></select></label><label>Energy<select id="wellness-energy"><option value="">Choose...</option><option>Low</option><option>Steady</option><option>High</option></select></label><label>Sleep (hours)<input id="wellness-sleep" type="number" min="0" max="24" step="0.5" placeholder="e.g. 7.5"></label><label>Water (glasses)<input id="wellness-water" type="number" min="0" max="30" placeholder="e.g. 6"></label><label class="wide-field">A note to yourself<textarea id="wellness-note" rows="3" maxlength="500" placeholder="Anything you want to remember about today..."></textarea></label></div><p class="daily-save-status">Your check-in saves automatically on this device.</p></article></div><article class="panel"><div class="panel-heading"><div><p class="eyebrow">NOTICE YOUR PATTERNS</p><h2>Recent wellness trends</h2></div></div><div id="wellness-trends" class="wellness-trends"></div></article></section>
+
+
+<section class="view" id="yearly-view"><div class="page-intro"><p class="eyebrow">SEE THE YEAR AHEAD</p><h1>Year at a glance<span class="period">.</span></h1><p class="subheading">Give the year a direction, then make room for the moments that matter.</p></div><article class="panel"><div class="toolbar-row"><label>Planning year<input id="yearly-year" type="number" min="2020" max="2100"></label><label>Word or theme for the year<input id="yearly-theme" maxlength="100" placeholder="e.g. Steady growth"></label></div><div class="yearly-goals-grid"><label>Big goal one<input id="year-goal-1" maxlength="140" placeholder="A meaningful goal"></label><label>Big goal two<input id="year-goal-2" maxlength="140" placeholder="A meaningful goal"></label><label>Big goal three<input id="year-goal-3" maxlength="140" placeholder="A meaningful goal"></label></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">IMPORTANT DATES</p><h2>Yearly milestones</h2></div></div><form id="milestone-form" class="life-form inline-life-form"><input id="milestone-name" maxlength="120" placeholder="Milestone or important date" required><input id="milestone-date" type="date" required><button class="primary-button" type="submit">Add milestone +</button></form><div id="milestone-list" class="life-list"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">THE BIG PICTURE</p><h2>Months of the year</h2></div></div><div id="year-month-grid" class="year-month-grid"></div></article></section>
+<section class="view" id="routines-view"><div class="page-intro"><p class="eyebrow">MAKE SPACE FOR SMALL RITUALS</p><h1>My routines<span class="period">.</span></h1><p class="subheading">Build gentle morning, evening and weekly rhythms.</p></div><article class="panel"><form id="routine-form" class="life-form inline-life-form"><input id="routine-name" maxlength="100" placeholder="Routine name (e.g. Evening reset)" required><select id="routine-time"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Weekly</option></select><button class="primary-button" type="submit">Create routine +</button></form><div id="routine-list" class="routine-grid"></div><p class="daily-save-status">Tick each step as you complete it. Progress resets each day.</p></article></section>
+<section class="view" id="finance-view"><div class="page-intro"><p class="eyebrow">BE INTENTIONAL WITH MONEY</p><h1>My finances<span class="period">.</span></h1><p class="subheading">A simple overview of your spending, income and upcoming bills.</p></div><article class="panel"><div class="toolbar-row"><label>Monthly budget ($)<input id="finance-budget" type="number" min="0" step="0.01" placeholder="e.g. 2500"></label><div class="finance-summary"><span>Income <strong id="finance-income">$0.00</strong></span><span>Expenses <strong id="finance-expenses">$0.00</strong></span><span>Remaining <strong id="finance-remaining">$0.00</strong></span></div></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">TRACK YOUR MONEY</p><h2>Add a transaction</h2></div></div><form id="finance-form" class="life-form finance-form"><label>Description<input id="finance-description" maxlength="120" placeholder="e.g. Weekly groceries" required></label><label>Amount ($)<input id="finance-amount" type="number" min="0.01" step="0.01" required></label><label>Type<select id="finance-type"><option value="expense">Expense</option><option value="income">Income</option><option value="bill">Bill</option></select></label><label>Category<input id="finance-category" maxlength="60" placeholder="e.g. Food, transport, salary"></label><label>Date<input id="finance-date" type="date" required></label><button class="primary-button" type="submit">Save transaction +</button></form><div id="finance-list" class="life-list"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">PLAN AHEAD</p><h2>Savings goals & subscriptions</h2></div></div><form id="saving-form" class="life-form inline-life-form"><input id="saving-name" maxlength="100" placeholder="Savings goal" required><input id="saving-target" type="number" min="1" step="0.01" placeholder="Target amount ($)" required><button class="primary-button">Add goal +</button></form><div id="saving-list" class="life-list"></div><form id="subscription-form" class="life-form inline-life-form"><input id="subscription-name" maxlength="100" placeholder="Subscription / recurring bill" required><input id="subscription-amount" type="number" min="0.01" step="0.01" placeholder="Amount ($)" required><select id="subscription-frequency"><option>Monthly</option><option>Weekly</option><option>Quarterly</option><option>Yearly</option></select><button class="secondary-button">Add recurring item</button></form><div id="subscription-list" class="life-list"></div></article></section>
+<section class="view" id="travel-view"><div class="page-intro"><p class="eyebrow">PLAN YOUR NEXT ADVENTURE</p><h1>Travel planner<span class="period">.</span></h1><p class="subheading">Keep trip details, bookings and packing in one place.</p></div><article class="panel"><form id="trip-form" class="life-form trip-form"><label>Trip name<input id="trip-name" maxlength="120" placeholder="e.g. Weekend in Melbourne" required></label><label>Destination<input id="trip-destination" maxlength="120" placeholder="Where are you going?" required></label><label>Start date<input id="trip-start" type="date"></label><label>End date<input id="trip-end" type="date"></label><label class="wide-field">Booking details / notes<textarea id="trip-notes" rows="2" maxlength="600" placeholder="Accommodation, flights, confirmation details..."></textarea></label><button class="primary-button" type="submit">Create trip +</button></form><div id="trip-list" class="trip-grid"></div><div class="trip-itinerary-area"><h2>Trip itinerary</h2><form id="itinerary-form" class="life-form inline-life-form"><select id="itinerary-trip" aria-label="Choose trip"></select><input id="itinerary-date" type="date"><input id="itinerary-time" type="time"><input id="itinerary-title" maxlength="120" placeholder="Activity, booking or plan" required><button class="primary-button">Add itinerary item +</button></form><div id="itinerary-list" class="life-list"></div></div></article></section>
+<section class="view" id="focus-view"><div class="page-intro"><p class="eyebrow">ONE THING AT A TIME</p><h1>Focus space<span class="period">.</span></h1><p class="subheading">A gentle timer to help you settle into one task.</p></div><article class="panel focus-timer-panel"><p class="eyebrow">FOCUS SESSION</p><div id="focus-clock" class="focus-clock">25:00</div><label>Session length (minutes)<input id="focus-duration" type="number" min="1" max="180" value="25"></label><div class="focus-actions"><button class="primary-button" id="focus-start" type="button">Start focus</button><button class="secondary-button" id="focus-pause" type="button">Pause</button><button class="secondary-button" id="focus-reset" type="button">Reset</button></div><p id="focus-status" class="daily-save-status">Choose one small task and begin when you're ready.</p></article></section>
+<section class="view" id="backup-view"><div class="page-intro"><p class="eyebrow">YOUR PLANNER, YOUR DATA</p><h1>Backup & settings<span class="period">.</span></h1><p class="subheading">Keep a safe copy of your information and choose what appears on your dashboard.</p></div><article class="panel"><div class="panel-heading"><div><p class="eyebrow">PERSONALISE YOUR SPACE</p><h2>Dashboard cards</h2></div></div><div id="dashboard-settings" class="dashboard-settings"></div><div class="toolbar-row theme-row"><label>Planner colour theme<select id="planner-theme"><option value="earth">Earthy (default)</option><option value="sage">Soft sage</option><option value="clay">Warm clay</option><option value="sand">Quiet sand</option></select></label><button class="secondary-button" id="print-current" type="button">Print current section</button></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">KEEP YOUR INFORMATION SAFE</p><h2>Backup & restore</h2></div></div><p class="form-helper">Export a copy regularly. The backup includes your tasks, calendar, notes and all planner sections. Keep the file somewhere safe.</p><div class="backup-actions"><button class="primary-button" id="export-data" type="button">Download backup</button><label class="secondary-button file-button">Restore from backup<input id="import-data" type="file" accept="application/json,.json"></label></div><p id="backup-status" class="daily-save-status">Your information is stored in this browser on this device. This does not synchronise across devices.</p></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">FIND ANYTHING</p><h2>Search your planner</h2></div></div><input id="search-page-input" class="wide-input" type="search" placeholder="Search tasks, projects, notes, trips and lists..."><div id="search-results" class="search-results"></div></article></section>
 
       <section class="view" id="habits-view">
         <div class="page-intro"><p class="eyebrow">SHOW UP FOR YOURSELF</p><h1>My habits<span class="period">.</span></h1><p class="subheading">Small actions, repeated with care.</p></div>
