@@ -19,7 +19,8 @@ const defaultData = () => ({
   mood: {},
   intention: "",
   notes: "",
-  dailyPlans: {}
+  dailyPlans: {},
+  weeklyReviews: {}
 });
 
 let data = defaultData();
@@ -60,6 +61,8 @@ async function loadData() {
     document.getElementById("connection-label").textContent = "Local browser storage";
   }
   data.dailyPlans = data.dailyPlans || {};
+  data.weeklyReviews = data.weeklyReviews || {};
+  data.events = data.events || [];
   renderAll();
 }
 async function saveData() {
@@ -102,6 +105,7 @@ function renderAll() {
   const date = new Date();
   document.getElementById("top-date").textContent = date.toLocaleDateString(undefined, { weekday:"short", day:"numeric", month:"short" });
   document.getElementById("welcome-date").textContent = date.toLocaleDateString(undefined, { weekday:"long", day:"numeric", month:"long" }).toUpperCase();
+  renderCalendar();
 }
 function renderTasks() {
   const todayTasks = data.tasks.filter(t => !t.done && (!t.date || t.date <= today()));
@@ -178,10 +182,10 @@ document.addEventListener("click", e => {
     const [kind, id] = calendarItem.dataset.calendarItem.split(":");
     if (kind === "task") {
       const task = data.tasks.find(t => t.id === id);
-      if (task) { task.done = !task.done; saveData(); renderTasks(); renderSelectedDay(); }
+      if (task) { task.done = !task.done; saveData(); renderTasks(); renderSelectedDay(); renderDailyTasks(); renderWeeklyReview(); }
     } else if (kind === "event") {
       data.events = data.events.filter(item => item.id !== id);
-      saveData(); renderCalendar(); renderSelectedDay(); toast("Event deleted");
+      saveData(); renderCalendar(); renderDailyPlanner(); renderWeeklyReview(); toast("Event deleted");
     }
   }
 });
@@ -228,8 +232,16 @@ function addDays(date, amount) {
 function dateLabel(key, options = { weekday: "long", day: "numeric", month: "long", year: "numeric" }) {
   return new Date(key + "T12:00:00").toLocaleDateString(undefined, options);
 }
+function eventOccursOnDate(item, key) {
+  const start = item.date || item.startDate;
+  const end = item.endDate || start;
+  return !!start && key >= start && key <= end;
+}
+function eventsForDate(key) {
+  return (data.events || []).filter(item => eventOccursOnDate(item, key)).map(item => ({...item, kind: "event"}));
+}
 function itemsForDate(key) {
-  const events = (data.events || []).filter(item => item.date === key).map(item => ({...item, kind: "event"}));
+  const events = eventsForDate(key);
   const tasks = data.tasks.filter(item => item.date === key).map(item => ({...item, kind: "task", type: "task"}));
   return [...events, ...tasks].sort((a, b) => (a.time || "").localeCompare(b.time || ""));
 }
@@ -283,10 +295,14 @@ document.getElementById("event-form").addEventListener("submit", event => {
   const title = document.getElementById("event-title"), date = document.getElementById("event-date");
   if (!title.value.trim() || !date.value) return;
   data.events = data.events || [];
-  data.events.push({id:uid(), title:title.value.trim(), date:date.value, time:document.getElementById("event-time").value, type:document.getElementById("event-type").value});
+  const endDateInput = document.getElementById("event-end-date");
+  const endDate = endDateInput.value || date.value;
+  if (endDate < date.value) { toast("End date must be the same as or after the start date"); endDateInput.focus(); return; }
+  const isMultiDay = endDate > date.value;
+  data.events.push({id:uid(), title:title.value.trim(), date:date.value, endDate, time:document.getElementById("event-time").value, type:document.getElementById("event-type").value});
   selectedCalendarDate = date.value; calendarDate = new Date(date.value + "T12:00:00");
-  saveData(); renderCalendar(); title.value = ""; document.getElementById("event-time").value = "";
-  toast("Event saved to your calendar");
+  saveData(); renderCalendar(); renderDailyPlanner(); renderWeeklyReview(); title.value = ""; date.value = today(); endDateInput.value = ""; document.getElementById("event-time").value = "";
+  toast(isMultiDay ? "Multi-day event saved" : "Event saved to your calendar");
 });
 document.getElementById("calendar-prev").addEventListener("click", () => {
   if (calendarView === "month") calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth()-1, 1);
@@ -328,12 +344,20 @@ function renderDailyPlanner() {
   const plan = getDailyPlan();
   [1,2,3].forEach((n,i) => { const el=document.getElementById(`priority-${n}`); if(el) el.value=plan.priorities[i] || ""; });
   ["well","challenge","grateful"].forEach(k => { const el=document.getElementById(`reflection-${k}`); if(el) el.value=plan.reflection[k] || ""; });
-  renderDailySchedule(); renderDailyTasks(); renderDailyHabits();
+  renderDailySchedule(); renderDailyEvents(); renderDailyTasks(); renderDailyHabits();
 }
 function renderDailySchedule() {
   const el=document.getElementById("daily-schedule-list"); if(!el) return;
   const items=getDailyPlan().schedule.slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   el.innerHTML=items.length ? items.map(item=>`<div class="daily-schedule-item"><span><strong>${escapeHTML(item.time)}</strong> · ${escapeHTML(item.activity)}</span><button type="button" class="daily-delete-button" data-schedule-delete="${escapeHTML(item.id)}" aria-label="Delete schedule item">Remove</button></div>`).join("") : "<p class=\"daily-empty\">Your schedule is clear. Add something when you\'re ready.</p>";
+}
+function renderDailyEvents() {
+  const el=document.getElementById("daily-events-list"); if(!el) return;
+  const events=eventsForDate(dailySelectedDate);
+  el.innerHTML=events.length ? events.map(item=>{
+    const span=item.endDate && item.endDate!==item.date ? ` <small class="event-span-label">${niceDate(item.date)} – ${niceDate(item.endDate)}</small>` : "";
+    return `<div class="daily-event-item"><span class="legend-dot ${escapeHTML(item.type)}"></span><span><strong>${item.time ? escapeHTML(item.time)+" · " : ""}${escapeHTML(item.title)}</strong>${span}<small>${escapeHTML(item.type)}</small></span></div>`;
+  }).join("") : '<p class="daily-empty">No calendar events on this date.</p>';
 }
 function renderDailyTasks() {
   const el=document.getElementById("daily-tasks-list"); if(!el) return;
@@ -354,9 +378,64 @@ document.getElementById("daily-today").addEventListener("click", ()=>{dailySelec
 document.getElementById("schedule-form").addEventListener("submit",e=>{e.preventDefault();const time=document.getElementById("schedule-time"),activity=document.getElementById("schedule-activity");if(!time.value||!activity.value.trim())return;getDailyPlan().schedule.push({id:uid(),time:time.value,activity:activity.value.trim()});saveDailyPlan();renderDailySchedule();time.value="";activity.value="";toast("Added to your daily schedule");});
 document.addEventListener("click",e=>{const remove=e.target.closest("[data-schedule-delete]");if(remove){const plan=getDailyPlan();plan.schedule=plan.schedule.filter(x=>x.id!==remove.dataset.scheduleDelete);saveDailyPlan();renderDailySchedule();}});
 document.addEventListener("change",e=>{
-  if(e.target.matches("[data-daily-task]")){const task=data.tasks.find(t=>t.id===e.target.dataset.dailyTask);if(task){task.done=e.target.checked;saveData();renderTasks();renderDailyTasks();renderCalendar();}}
+  if(e.target.matches("[data-daily-task]")){const task=data.tasks.find(t=>t.id===e.target.dataset.dailyTask);if(task){task.done=e.target.checked;saveData();renderTasks();renderDailyTasks();renderCalendar();renderWeeklyReview();}}
   if(e.target.matches("[data-daily-habit]")){const id=e.target.dataset.dailyHabit;const checks=new Set(getDailyPlan().habitChecks);if(e.target.checked)checks.add(id);else checks.delete(id);getDailyPlan().habitChecks=[...checks];saveDailyPlan();}
 });
+
+// Weekly Review: saved separately for each Sunday-to-Saturday week.
+let weeklySelectedDate = today();
+function weekKey(dateKeyValue) { return dateKey(startOfWeek(new Date(dateKeyValue + "T12:00:00"))); }
+function getWeeklyReview() {
+  data.weeklyReviews=data.weeklyReviews || {};
+  const key=weekKey(weeklySelectedDate);
+  if(!data.weeklyReviews[key]) data.weeklyReviews[key]={wins:"",challenges:"",improve:"",priorities:["","",""]};
+  const review=data.weeklyReviews[key];
+  review.priorities=Array.isArray(review.priorities)?review.priorities:["","",""];
+  return review;
+}
+function saveWeeklyReview() {
+  saveData();
+  const status=document.getElementById("weekly-save-status");
+  if(status) status.textContent="Saved on this device · "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+}
+function renderWeeklyReview() {
+  const dateInput=document.getElementById("weekly-date"); if(!dateInput) return;
+  dateInput.value=weeklySelectedDate;
+  const start=new Date(weekKey(weeklySelectedDate)+"T12:00:00"), end=addDays(start,6);
+  const startKey=dateKey(start), endKey=dateKey(end);
+  document.getElementById("weekly-range-label").textContent=`${dateLabel(startKey,{day:"numeric",month:"short"})} – ${dateLabel(endKey,{day:"numeric",month:"short",year:"numeric"})}`;
+  const weekTasks=data.tasks.filter(t=>t.date && t.date>=startKey && t.date<=endKey);
+  const completed=weekTasks.filter(t=>t.done).length;
+  document.getElementById("weekly-completed").textContent=completed;
+  document.getElementById("weekly-outstanding").textContent=weekTasks.length-completed;
+  document.getElementById("weekly-task-total").textContent=`${weekTasks.length} dated task${weekTasks.length===1?"":"s"} this week`;
+  const unfinished=weekTasks.filter(t=>!t.done);
+  const carryEl=document.getElementById("weekly-carry-list");
+  carryEl.innerHTML=unfinished.length?unfinished.map(t=>`<label class="weekly-carry-item"><input type="checkbox" data-carry-task="${escapeHTML(t.id)}"><span>${escapeHTML(t.title)}</span><small>${niceDate(t.date)}</small></label>`).join(""):'<p class="daily-empty">You have no unfinished dated tasks this week.</p>';
+  document.getElementById("carry-tasks-button").disabled=!unfinished.length;
+  const habitNames=[...new Map(data.habits.map(h=>[(h.name||"").trim().toLowerCase(),h.name])).values()].filter(Boolean);
+  let habitDone=0;
+  for(let i=0;i<7;i++){const key=dateKey(addDays(start,i));const checks=(data.dailyPlans?.[key]?.habitChecks)||[];habitDone+=checks.length;}
+  document.getElementById("weekly-habits").textContent=`${habitDone} / ${habitNames.length*7}`;
+  const events=[]; for(let i=0;i<7;i++){const key=dateKey(addDays(start,i));eventsForDate(key).forEach(ev=>events.push({...ev,day:key}));}
+  const eventEl=document.getElementById("weekly-events-list");
+  eventEl.innerHTML=events.length?events.map(ev=>`<div class="weekly-event-row"><span class="legend-dot ${escapeHTML(ev.type)}"></span><span><strong>${escapeHTML(ev.title)}</strong><small>${dateLabel(ev.day,{weekday:"short",day:"numeric",month:"short"})}${ev.time?" · "+escapeHTML(ev.time):""}</small></span></div>`).join(""):'<p class="daily-empty">No calendar events scheduled for this week.</p>';
+  const review=getWeeklyReview();
+  [["weekly-wins",review.wins],["weekly-challenges",review.challenges],["weekly-improve",review.improve]].forEach(([id,value])=>document.getElementById(id).value=value||"");
+  [1,2,3].forEach((n,i)=>document.getElementById(`weekly-priority-${n}`).value=review.priorities[i]||"");
+}
+document.getElementById("weekly-date").addEventListener("change",e=>{if(e.target.value){weeklySelectedDate=e.target.value;renderWeeklyReview();}});
+document.getElementById("weekly-prev").addEventListener("click",()=>{weeklySelectedDate=dateKey(addDays(new Date(weeklySelectedDate+"T12:00:00"),-7));renderWeeklyReview();});
+document.getElementById("weekly-next").addEventListener("click",()=>{weeklySelectedDate=dateKey(addDays(new Date(weeklySelectedDate+"T12:00:00"),7));renderWeeklyReview();});
+document.getElementById("weekly-today").addEventListener("click",()=>{weeklySelectedDate=today();renderWeeklyReview();});
+document.getElementById("carry-tasks-button").addEventListener("click",()=>{
+  const selected=[...document.querySelectorAll("[data-carry-task]:checked")].map(el=>el.dataset.carryTask);
+  if(!selected.length){toast("Select at least one task to move");return;}
+  selected.forEach(id=>{const task=data.tasks.find(t=>t.id===id);if(task&&task.date){task.date=dateKey(addDays(new Date(task.date+"T12:00:00"),7));}});
+  saveData();renderTasks();renderCalendar();renderWeeklyReview();toast(`${selected.length} task${selected.length===1?"":"s"} moved to next week`);
+});
+["wins","challenges","improve"].forEach(k=>document.getElementById(`weekly-${k}`).addEventListener("input",e=>{getWeeklyReview()[k]=e.target.value;saveWeeklyReview();}));
+[1,2,3].forEach((n,i)=>document.getElementById(`weekly-priority-${n}`).addEventListener("input",e=>{getWeeklyReview().priorities[i]=e.target.value;saveWeeklyReview();}));
 
 function showView(name) {
   const target = document.getElementById(`${name}-view`);
@@ -364,6 +443,7 @@ function showView(name) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active-view"));
   target.classList.add("active-view");
   if (name === "daily") renderDailyPlanner();
+  if (name === "weekly") renderWeeklyReview();
   document.querySelectorAll(".nav-link").forEach(b => b.classList.toggle("active", b.dataset.view === name));
   document.getElementById("section-name").textContent = name.toUpperCase();
   document.getElementById("sidebar").classList.remove("open");

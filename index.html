@@ -25,6 +25,7 @@
         <button class="nav-link" data-view="notes"><span>▤</span> Notes</button>
         <button class="nav-link" data-view="calendar"><span>▦</span> Calendar</button>
         <button class="nav-link" data-view="daily"><span>☀</span> Daily Planner</button>
+        <button class="nav-link" data-view="weekly"><span>▧</span> Weekly Review</button>
       </nav>
       <div class="sidebar-bottom">
         <div class="offline-indicator"><span class="status-dot"></span><span id="connection-label">Ready to plan</span></div>
@@ -121,7 +122,8 @@
             <div class="panel-heading"><div><p class="eyebrow">ADD TO YOUR CALENDAR</p><h2>New event</h2></div><span class="leaf-mark">✳</span></div>
             <form id="event-form" class="event-form">
               <label>Event name<input id="event-title" maxlength="100" placeholder="e.g. Dentist appointment" required></label>
-              <div class="event-form-row"><label>Date<input id="event-date" type="date" required></label><label>Time <span class="muted">(optional)</span><input id="event-time" type="time"></label></div>
+              <div class="event-form-row"><label>Start date<input id="event-date" type="date" required></label><label>End date <span class="muted">(optional)</span><input id="event-end-date" type="date"></label></div>
+              <label>Time <span class="muted">(optional)</span><input id="event-time" type="time"></label>
               <label>Type<select id="event-type"><option value="appointment">Appointment</option><option value="birthday">Birthday</option><option value="reminder">Reminder</option></select></label>
               <button class="primary-button" type="submit">Save event +</button>
             </form>
@@ -150,6 +152,10 @@
           <div id="daily-schedule-list"></div>
         </article>
         <article class="panel daily-panel">
+          <div class="panel-heading"><div><p class="eyebrow">WHAT'S ON</p><h2>Calendar events</h2></div><button class="text-button" data-go="calendar">Open calendar ↗</button></div>
+          <div id="daily-events-list"></div>
+        </article>
+        <article class="panel daily-panel">
           <div class="panel-heading"><div><p class="eyebrow">THINGS TO GET DONE</p><h2>My tasks</h2></div></div>
           <div id="daily-tasks-list"></div>
         </article>
@@ -165,6 +171,39 @@
             <label>What am I grateful for?<textarea id="reflection-grateful" maxlength="1500" placeholder="Today I'm grateful for..."></textarea></label>
           </div>
           <p class="daily-save-status" id="daily-save-status" role="status">Your entries save automatically.</p>
+        </article>
+      </section>
+
+      <section class="view" id="weekly-view">
+        <div class="page-intro"><p class="eyebrow">PAUSE, NOTICE & BEGIN AGAIN</p><h1>Weekly Review<span class="period">.</span></h1><p class="subheading">Celebrate what went well and gently plan what comes next.</p></div>
+        <article class="panel weekly-date-panel">
+          <button class="calendar-icon-button" id="weekly-prev" type="button" aria-label="Previous week">‹</button>
+          <label for="weekly-date">Choose a date in your week</label><input type="date" id="weekly-date">
+          <button class="calendar-icon-button" id="weekly-next" type="button" aria-label="Next week">›</button>
+          <button class="secondary-button" id="weekly-today" type="button">This week</button>
+          <strong id="weekly-range-label"></strong>
+        </article>
+        <div class="weekly-stats-grid">
+          <article class="stat-card"><div class="stat-icon sage">✓</div><div><span>Tasks completed</span><strong id="weekly-completed">0</strong><small id="weekly-task-total">0 tasks this week</small></div></article>
+          <article class="stat-card"><div class="stat-icon clay">○</div><div><span>Still to do</span><strong id="weekly-outstanding">0</strong><small>Tasks not yet completed</small></div></article>
+          <article class="stat-card"><div class="stat-icon sand">✳</div><div><span>Habits checked</span><strong id="weekly-habits">0 / 0</strong><small>Across the selected week</small></div></article>
+        </div>
+        <article class="panel weekly-panel"><div class="panel-heading"><div><p class="eyebrow">LOOK BACK</p><h2>Your week at a glance</h2></div></div><div id="weekly-events-list" class="weekly-events-list"></div></article>
+        <article class="panel weekly-panel"><div class="panel-heading"><div><p class="eyebrow">A FRESH START</p><h2>Unfinished tasks</h2></div></div>
+          <p class="subheading">Select anything you'd like to move to the same day next week. Nothing moves unless you select it.</p>
+          <div id="weekly-carry-list" class="weekly-carry-list"></div>
+          <button class="primary-button" id="carry-tasks-button" type="button">Move selected to next week</button>
+        </article>
+        <article class="panel weekly-panel"><div class="panel-heading"><div><p class="eyebrow">REFLECT WITH KINDNESS</p><h2>How was your week?</h2></div></div>
+          <div class="daily-reflection">
+            <label>Wins of the week — what went well?<textarea id="weekly-wins" maxlength="2000" placeholder="What are you proud of this week?"></textarea></label>
+            <label>What felt challenging?<textarea id="weekly-challenges" maxlength="2000" placeholder="What was difficult or didn't go to plan?"></textarea></label>
+            <label>What would you like to do differently?<textarea id="weekly-improve" maxlength="2000" placeholder="One small adjustment for next week..."></textarea></label>
+          </div>
+        </article>
+        <article class="panel weekly-panel"><div class="panel-heading"><div><p class="eyebrow">LOOK AHEAD</p><h2>Next week's priorities</h2></div></div>
+          <div class="daily-priorities"><input id="weekly-priority-1" maxlength="160" placeholder="Priority one..."><input id="weekly-priority-2" maxlength="160" placeholder="Priority two..."><input id="weekly-priority-3" maxlength="160" placeholder="Priority three..."></div>
+          <p class="daily-save-status" id="weekly-save-status">Your review saves automatically on this device.</p>
         </article>
       </section>
 
