@@ -31,6 +31,7 @@ let db = null;
 let calendarDate = new Date();
 let calendarView = "month";
 let selectedCalendarDate = today();
+let dashboardSelectedDate = today();
 
 function openDatabase() {
   return new Promise((resolve, reject) => {
@@ -115,22 +116,65 @@ function renderDashboardOverview() {
   const weekCaption = document.getElementById("week-task-caption");
   if (weekCount) weekCount.textContent = `${weeklyDone} / ${weeklyTasks.length}`;
   if (weekCaption) weekCaption.textContent = weeklyTasks.length ? "Tasks completed this week" : "Add a dated task to begin";
-  const todayLife = document.getElementById("dashboard-today-life");
-  if (todayLife) {
-    const meals = (data.meals || []).filter(x => x.date === today()).sort((a,b) => ["Breakfast","Lunch","Dinner","Snack"].indexOf(a.type)-["Breakfast","Lunch","Dinner","Snack"].indexOf(b.type));
-    const workouts = (data.workouts || []).filter(x => x.date === today());
-    const priorities = (getDailyPlan(today()).priorities || []).filter(Boolean);
-    todayLife.innerHTML = `<div class="today-life-block"><strong>Today's meals</strong>${meals.length ? meals.map(m=>`<span>${escapeHTML(m.type)} · ${escapeHTML(m.name)}</span>`).join("") : '<small>No meals planned yet.</small>'}</div><div class="today-life-block"><strong>Movement</strong>${workouts.length ? workouts.map(w=>`<span>${escapeHTML(w.name)}${w.duration?` · ${escapeHTML(w.duration)} min`:""}</span>`).join("") : '<small>No workout logged today.</small>'}</div><div class="today-life-block"><strong>Top priorities</strong>${priorities.length ? priorities.map(x=>`<span>${escapeHTML(x)}</span>`).join("") : '<small>Add priorities in your Daily Planner.</small>'}</div>`;
-  }
+
   const upcoming = document.getElementById("dashboard-upcoming");
-  if (!upcoming) return;
-  const found = [];
-  for (let i = 0; i < 14; i++) {
-    const key = dateKey(addDays(new Date(today() + "T12:00:00"), i));
-    eventsForDate(key).forEach(event => found.push({...event, dayKey:key}));
+  if (upcoming) {
+    const found = [];
+    for (let i = 0; i < 14; i++) {
+      const key = dateKey(addDays(new Date(dashboardSelectedDate + "T12:00:00"), i));
+      eventsForDate(key).forEach(event => found.push({...event, dayKey:key}));
+    }
+    const unique = [...new Map(found.map(item => [`${item.id}:${item.dayKey}`, item])).values()].slice(0, 5);
+    upcoming.innerHTML = unique.length ? unique.map(item => `<div class="upcoming-event-row"><span class="legend-dot ${escapeHTML(item.type)}"></span><span><strong>${escapeHTML(item.title)}</strong><small>${dateLabel(item.dayKey,{weekday:"short",day:"numeric",month:"short"})}${item.time ? " · "+escapeHTML(item.time) : ""}</small></span></div>`).join("") : '<p class="empty-hint">Nothing coming up in the next two weeks.</p>';
   }
-  const unique = [...new Map(found.map(item => [`${item.id}:${item.dayKey}`, item])).values()].slice(0, 5);
-  upcoming.innerHTML = unique.length ? unique.map(item => `<div class="upcoming-event-row"><span class="legend-dot ${escapeHTML(item.type)}"></span><span><strong>${escapeHTML(item.title)}</strong><small>${dateLabel(item.dayKey,{weekday:"short",day:"numeric",month:"short"})}${item.time ? " · "+escapeHTML(item.time) : ""}</small></span></div>`).join("") : '<p class="empty-hint">Nothing coming up in the next two weeks.</p>';
+  renderDashboardDay();
+}
+
+function renderDashboardDay() {
+  const key = dashboardSelectedDate || today();
+  const date = new Date(key + "T12:00:00");
+  const dateLabelEl = document.getElementById("dashboard-date-label");
+  const dateInput = document.getElementById("dashboard-date");
+  const welcome = document.getElementById("welcome-date");
+  if (dateLabelEl) dateLabelEl.textContent = key === today() ? "Today" : date.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+  if (dateInput && dateInput.value !== key) dateInput.value = key;
+  if (welcome) welcome.textContent = date.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
+
+  const plan = getDailyPlan(key);
+  [1,2,3].forEach((n,i)=>{const input=document.getElementById(`dashboard-priority-${n}`);if(input && document.activeElement!==input)input.value=plan.priorities[i]||"";});
+
+  const schedule = document.getElementById("dashboard-schedule-list");
+  if (schedule) {
+    const items = [...plan.schedule].sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+    schedule.innerHTML = items.length ? items.map(item=>`<div class="dashboard-timeline-row"><time>${escapeHTML(item.time||"")}</time><span class="dashboard-timeline-dot"></span><strong>${escapeHTML(item.activity)}</strong><button type="button" data-dashboard-schedule-delete="${escapeHTML(item.id)}" aria-label="Remove ${escapeHTML(item.activity)}">×</button></div>`).join("") : '<p class="dashboard-empty">Your schedule is open. Add an activity to give your day a little shape.</p>';
+  }
+
+  const tasks = data.tasks.filter(t=>!t.done&&(!t.date||t.date<=key)).sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  const taskList = document.getElementById("today-task-list");
+  if (taskList) taskList.innerHTML = tasks.slice(0,7).map(t=>`<label class="dashboard-task-row"><input type="checkbox" data-dashboard-task="${escapeHTML(t.id)}"><span>${escapeHTML(t.title)}</span>${t.date&&t.date<key?'<small class="dashboard-overdue-tag">Carried over</small>':t.date?`<small>${niceDate(t.date)}</small>`:""}</label>`).join("");
+  const taskEmpty=document.getElementById("task-empty");if(taskEmpty)taskEmpty.hidden=tasks.length>0;
+  const taskCount=document.getElementById("task-count");if(taskCount)taskCount.textContent=tasks.length;
+
+  const habits = data.habits.filter(h=>habitIsDue(h,key)||habitChecksFor(key).has(h.id));
+  const checks=habitChecksFor(key);
+  const habitList=document.getElementById("dashboard-habits");
+  if(habitList)habitList.innerHTML=habits.length?habits.map(h=>`<div class="habit-row"><button class="habit-check ${checks.has(h.id)?"checked":""}" data-dashboard-habit="${escapeHTML(h.id)}" aria-label="Toggle ${escapeHTML(h.name)}">${checks.has(h.id)?"✓":""}</button><label>${escapeHTML(h.name)}</label><small>${habitStreak(h)} day streak</small></div>`).join(""):'<p class="dashboard-empty">No habits due today. Enjoy the breathing room.</p>';
+  const completed=habits.filter(h=>checks.has(h.id)).length;
+  const habitCount=document.getElementById("habit-count");if(habitCount)habitCount.textContent=`${completed} / ${habits.length}`;
+  const progress=document.getElementById("dashboard-habit-progress");if(progress)progress.style.width=(habits.length?completed/habits.length*100:0)+"%";
+  const caption=document.getElementById("dashboard-habit-caption");if(caption)caption.textContent=habits.length?`${completed} of ${habits.length} habits completed`:"Add a habit when you're ready.";
+
+  const meals=(data.meals||[]).filter(x=>x.date===key).sort((a,b)=>["Breakfast","Lunch","Dinner","Snack"].indexOf(a.type)-["Breakfast","Lunch","Dinner","Snack"].indexOf(b.type));
+  const workouts=(data.workouts||[]).filter(x=>x.date===key);
+  const todayLife=document.getElementById("dashboard-today-life");
+  if(todayLife)todayLife.innerHTML=`<div class="today-life-block"><span class="today-life-icon">♧</span><strong>Meals</strong>${meals.length?meals.map(m=>`<span>${escapeHTML(m.type)} · ${escapeHTML(m.name)}</span>`).join(""):'<small>No meals planned yet.</small>'}</div><div class="today-life-block"><span class="today-life-icon">✳</span><strong>Movement</strong>${workouts.length?workouts.map(w=>`<span>${escapeHTML(w.name)}${w.duration?` · ${escapeHTML(w.duration)} min`:""}</span>`).join(""):'<small>No workout planned yet.</small>'}</div>`;
+
+  const dayEvents=eventsForDate(key);
+  const eventCount=document.getElementById("dashboard-event-count");if(eventCount)eventCount.textContent=dayEvents.length;
+  const eventCaption=document.getElementById("dashboard-event-caption");if(eventCaption)eventCaption.textContent=dayEvents.length?"On your calendar":"A little room to breathe";
+  const mood=data.mood[key]||"";
+  document.querySelectorAll("[data-dashboard-mood]").forEach(b=>b.classList.toggle("selected",b.dataset.dashboardMood===mood));
+  const moodFeedback=document.getElementById("mood-feedback");if(moodFeedback)moodFeedback.textContent=mood?`You checked in: ${mood}. Thanks for noticing how you feel.`:"There is no right or wrong answer.";
 }
 
 function renderAll() {
@@ -248,9 +292,20 @@ function addTask(title, date = "", frequency = "none", repeatUntil = "") {
   saveData(); renderTasks(); renderCalendar(); renderDailyPlanner(); renderWeeklyReview(); toast("Task added");
   return true;
 }
+// GGC-inspired dashboard interactions: date navigation, priorities and schedule.
+function shiftDashboardDate(days){dashboardSelectedDate=dateKey(addDays(new Date(dashboardSelectedDate+"T12:00:00"),days));renderDashboardOverview();}
+document.getElementById("dashboard-date").addEventListener("change",e=>{if(e.target.value){dashboardSelectedDate=e.target.value;renderDashboardOverview();}});
+document.getElementById("dashboard-prev-day").addEventListener("click",()=>shiftDashboardDate(-1));
+document.getElementById("dashboard-next-day").addEventListener("click",()=>shiftDashboardDate(1));
+document.getElementById("dashboard-today").addEventListener("click",()=>{dashboardSelectedDate=today();renderDashboardOverview();});
+[1,2,3].forEach((n,i)=>document.getElementById(`dashboard-priority-${n}`).addEventListener("input",e=>{getDailyPlan(dashboardSelectedDate).priorities[i]=e.target.value;saveData();}));
+document.getElementById("dashboard-schedule-form").addEventListener("submit",e=>{e.preventDefault();const time=document.getElementById("dashboard-schedule-time"),activity=document.getElementById("dashboard-schedule-activity");if(!time.value||!activity.value.trim())return;getDailyPlan(dashboardSelectedDate).schedule.push({id:uid(),time:time.value,activity:activity.value.trim()});saveData();renderDashboardDay();time.value="";activity.value="";toast("Added to your schedule");});
+document.addEventListener("click",e=>{const remove=e.target.closest("[data-dashboard-schedule-delete]");if(remove){const plan=getDailyPlan(dashboardSelectedDate);plan.schedule=plan.schedule.filter(x=>x.id!==remove.dataset.dashboardScheduleDelete);saveData();renderDashboardDay();return;}const habit=e.target.closest("[data-dashboard-habit]");if(habit){const id=habit.dataset.dashboardHabit,checks=habitChecksFor(dashboardSelectedDate);checks.has(id)?checks.delete(id):checks.add(id);getDailyPlan(dashboardSelectedDate).habitChecks=[...checks];saveData();renderDashboardDay();renderHabits();renderDailyPlanner();renderWeeklyReview();return;}});
+document.addEventListener("change",e=>{if(e.target.matches("[data-dashboard-task]")){const task=data.tasks.find(t=>t.id===e.target.dataset.dashboardTask);if(task){task.done=e.target.checked;saveData();renderTasks();renderDashboardOverview();renderCalendar();renderWeeklyReview();}}});
+
 document.getElementById("quick-task-form").addEventListener("submit", e => {
   e.preventDefault(); const input = document.getElementById("quick-task-input");
-  if (input.value.trim()) { addTask(input.value); input.value = ""; }
+  if (input.value.trim()) { addTask(input.value, dashboardSelectedDate); input.value = ""; }
 });
 document.getElementById("task-form").addEventListener("submit", e => {
   e.preventDefault();
@@ -270,7 +325,7 @@ document.addEventListener("click", e => {
   const taskDelete = e.target.closest("[data-task-delete]");
   if (taskDelete) { data.tasks = data.tasks.filter(t => t.id !== taskDelete.dataset.taskDelete); saveData(); renderTasks(); }
   const habit = e.target.closest("[data-habit]");
-  if (habit) { const item = data.habits.find(h => h.id === habit.dataset.habit); if (item) { const checks=habitChecksFor(today()); checks.has(item.id)?checks.delete(item.id):checks.add(item.id); getDailyPlan(today()).habitChecks=[...checks]; } saveData(); renderHabits(); renderDailyPlanner(); renderWeeklyReview(); }
+  if (habit) { const item = data.habits.find(h => h.id === habit.dataset.habit); if (item) { const checks=habitChecksFor(today()); checks.has(item.id)?checks.delete(item.id):checks.add(item.id); getDailyPlan(today()).habitChecks=[...checks]; } saveData(); renderHabits(); renderDailyPlanner(); renderWeeklyReview(); renderDashboardOverview(); }
   const goalDelete = e.target.closest("[data-goal-delete]");
   if (goalDelete) { data.goals = data.goals.filter(g => g.id !== goalDelete.dataset.goalDelete); saveData(); renderGoals(); }
   const calendarCell = e.target.closest("[data-calendar-date]");
@@ -308,8 +363,8 @@ document.addEventListener("input", e => {
   if (e.target.matches("[data-goal-field]")) { const goal=data.goals.find(g=>g.id===e.target.dataset.goalId); if(goal){goal[e.target.dataset.goalField]=e.target.value;saveData();} }
 });
 document.getElementById("mood-options").addEventListener("click", e => {
-  const button = e.target.closest("[data-mood]");
-  if (button) { data.mood[today()] = button.dataset.mood; saveData(); renderMood(); }
+  const button = e.target.closest("[data-dashboard-mood]");
+  if (button) { data.mood[dashboardSelectedDate] = button.dataset.dashboardMood; saveData(); renderDashboardDay(); }
 });
 document.getElementById("intention-input").addEventListener("input", e => {
   data.intention = e.target.value; saveData();
@@ -701,8 +756,8 @@ function renderAdvancedSections(){
  renderDashboardSettings();
 }
 function money(n){return new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD"}).format(Number(n)||0)}
-function applyDashboardOrder(){const grid=document.querySelector("#dashboard-view .content-grid");if(!grid)return;const order=data.dashboardOrder||[];const cards=[...grid.querySelectorAll("[data-dashboard-card]")];cards.sort((a,b)=>{const ai=order.indexOf(a.dataset.dashboardCard),bi=order.indexOf(b.dataset.dashboardCard);return (ai<0?999:ai)-(bi<0?999:bi);}).forEach(card=>grid.appendChild(card));}
-function renderDashboardSettings(){const names={tasks:"Today's tasks",habits:"Daily habits",checkin:"Daily check-in",upcoming:"Upcoming events",todaylife:"Meals, movement & priorities",intention:"Today's intention"};const el=document.getElementById("dashboard-settings");if(!el)return;el.innerHTML=Object.entries(names).map(([k,v],i)=>`<div class="dashboard-setting-row"><label><input type="checkbox" data-dashboard-toggle="${k}" ${!(data.dashboardHidden||[]).includes(k)?"checked":""}> ${v}</label><span class="dashboard-move-controls"><button type="button" data-dashboard-move="${k}" data-direction="up" aria-label="Move ${v} up">↑</button><button type="button" data-dashboard-move="${k}" data-direction="down" aria-label="Move ${v} down">↓</button></span></div>`).join("");document.querySelectorAll("[data-dashboard-card]").forEach(card=>card.hidden=(data.dashboardHidden||[]).includes(card.dataset.dashboardCard));applyDashboardOrder();const carry=document.getElementById("auto-carry-tasks");if(carry)carry.checked=!!data.autoCarryTasks;}
+function applyDashboardOrder(){const grid=document.querySelector("#dashboard-view .dashboard-main-grid");if(!grid)return;const order=[...(data.dashboardOrder||[])];["priorities","schedule","tasks","habits","todaylife","upcoming","checkin","intention"].forEach((key,index)=>{if(!order.includes(key))order.splice(index,0,key);});data.dashboardOrder=order;const cards=[...grid.querySelectorAll("[data-dashboard-card]")];cards.sort((a,b)=>order.indexOf(a.dataset.dashboardCard)-order.indexOf(b.dataset.dashboardCard)).forEach(card=>grid.appendChild(card));}
+function renderDashboardSettings(){const names={priorities:"Top three priorities",schedule:"Daily schedule",tasks:"To-do list",habits:"Daily habits",checkin:"Daily check-in",upcoming:"Upcoming events",todaylife:"Meals and movement",intention:"Today's intention"};const el=document.getElementById("dashboard-settings");if(!el)return;el.innerHTML=Object.entries(names).map(([k,v],i)=>`<div class="dashboard-setting-row"><label><input type="checkbox" data-dashboard-toggle="${k}" ${!(data.dashboardHidden||[]).includes(k)?"checked":""}> ${v}</label><span class="dashboard-move-controls"><button type="button" data-dashboard-move="${k}" data-direction="up" aria-label="Move ${v} up">↑</button><button type="button" data-dashboard-move="${k}" data-direction="down" aria-label="Move ${v} down">↓</button></span></div>`).join("");document.querySelectorAll("[data-dashboard-card]").forEach(card=>card.hidden=(data.dashboardHidden||[]).includes(card.dataset.dashboardCard));applyDashboardOrder();const carry=document.getElementById("auto-carry-tasks");if(carry)carry.checked=!!data.autoCarryTasks;}
 function runSearch(query){const q=(query||"").trim().toLowerCase(),out=document.getElementById("search-results");if(!out)return;if(!q){out.innerHTML="";return;}const found=[];const add=(type,name,detail,view)=>{if((name+" "+(detail||"")).toLowerCase().includes(q))found.push({type,name,detail,view});};(data.tasks||[]).forEach(x=>add("Task",x.title,x.date,"tasks"));(data.goals||[]).forEach(x=>add("Goal",x.name,x.category||"","goals"));(data.habits||[]).forEach(x=>add("Habit",x.name,x.frequency||"","habits"));(data.meals||[]).forEach(x=>add("Meal",x.name,x.date||"","home"));(data.projects||[]).forEach(x=>add("Project",x.name,x.next,"projects"));(data.collections||[]).forEach(x=>{add("List",x.name,"", "collections");(x.items||[]).forEach(i=>add("List item",i.name,x.name,"collections"));});(data.trips||[]).forEach(x=>add("Trip",x.name,x.destination,"travel"));(data.recipes||[]).forEach(x=>add("Recipe",x.name,(x.ingredients||[]).join(", "),"home"));(data.milestones||[]).forEach(x=>add("Milestone",x.name,x.date,"yearly"));(data.homeRecords||[]).forEach(x=>add(x.type,x.name,x.details,"home"));(data.subscriptions||[]).forEach(x=>add("Subscription",x.name,x.frequency,"finance"));(data.savingsGoals||[]).forEach(x=>add("Savings goal",x.name,money(x.target),"finance"));(data.itinerary||[]).forEach(x=>add("Itinerary",x.title,x.date,"travel"));(data.events||[]).forEach(x=>add("Event",x.title,x.date,"calendar"));add("Notes",data.notes||"","Personal notebook","notes");out.innerHTML=found.length?found.slice(0,40).map(x=>`<button class="search-result" type="button" data-search-go="${x.view}"><strong>${escapeHTML(x.name)}</strong><small>${escapeHTML(x.type)}${x.detail?" · "+escapeHTML(x.detail):""}</small></button>`).join(""):'<p class="empty-hint">No matching items found.</p>';}
 function exportPlannerData(){const blob=new Blob([JSON.stringify({...data,exportedAt:new Date().toISOString(),app:"My Life Planner"},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`my-life-planner-backup-${today()}.json`;a.click();URL.revokeObjectURL(url);document.getElementById("backup-status").textContent="Backup downloaded. Keep it somewhere safe.";}
 
@@ -750,7 +805,7 @@ function showView(name) {
   target.classList.add("active-view");
   if (name === "daily") renderDailyPlanner();
   if (name === "weekly") renderWeeklyReview();
-  if (name === "dashboard") renderDashboardSettings();
+  if (name === "dashboard") { renderDashboardSettings(); renderDashboardOverview(); }
   if (name === "monthly") renderMonthlyPlanner();
   if (["home","projects","collections","wellness"].includes(name)) renderLifeSections();
   if (["yearly","routines","finance","travel","backup"].includes(name)) renderAdvancedSections();
@@ -759,7 +814,7 @@ function showView(name) {
   document.getElementById("sidebar").classList.remove("open");
 }
 document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => showView(b.dataset.view)));
-document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => showView(b.dataset.go)));
+document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { if(b.closest("#dashboard-view") && b.dataset.go==="daily") dailySelectedDate=dashboardSelectedDate; showView(b.dataset.go); }));
 document.getElementById("menu-toggle").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
 window.addEventListener("online", () => { document.getElementById("connection-label").textContent = "Ready to plan"; });
 window.addEventListener("offline", () => { document.getElementById("connection-label").textContent = "Offline mode"; });

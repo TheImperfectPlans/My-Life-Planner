@@ -62,53 +62,86 @@
       </header>
 
       <section class="view active-view" id="dashboard-view">
-        <div class="welcome-row">
-          <div><p class="eyebrow" id="welcome-date">YOUR DAY, AT YOUR PACE</p><h1>Good morning<span class="period">.</span></h1>
-            <p class="subheading">A fresh page. A gentle place to begin.</p></div>
-          <div class="welcome-note"><span>✿</span><p>“Almost everything will work again if you unplug it for a few minutes, including you.”</p><small>— ANNE LAMOTT</small></div>
+        <div class="dashboard-hero">
+          <div class="dashboard-greeting">
+            <p class="eyebrow" id="welcome-date">YOUR DAY, AT YOUR PACE</p>
+            <h1>Today, thoughtfully planned<span class="period">.</span></h1>
+            <p class="subheading">Your day, your priorities, and a little space to breathe.</p>
+          </div>
+          <div class="dashboard-date-control" aria-label="Choose dashboard date">
+            <button type="button" id="dashboard-prev-day" aria-label="Previous day">‹</button>
+            <label><span id="dashboard-date-label">Today</span><input type="date" id="dashboard-date" aria-label="Dashboard date"></label>
+            <button type="button" id="dashboard-next-day" aria-label="Next day">›</button>
+            <button type="button" id="dashboard-today" class="dashboard-today-button">Today</button>
+          </div>
         </div>
 
-        <div class="stats-grid">
-          <article class="stat-card"><div class="stat-icon sage">☷</div><div><span>Tasks for today</span><strong id="task-count">0</strong><small>Keep it simple</small></div></article>
-          <article class="stat-card"><div class="stat-icon clay">◷</div><div><span>Habits completed</span><strong id="habit-count">0 / 3</strong><small>A little consistency</small></div></article>
-          <article class="stat-card"><div class="stat-icon sand">✳</div><div><span>Goals in progress</span><strong id="goal-count">0</strong><small>One step at a time</small></div></article>
-          <article class="stat-card"><div class="stat-icon clay">▧</div><div><span>Tasks this week</span><strong id="week-task-count">0 / 0</strong><small id="week-task-caption">Your weekly rhythm</small></div></article>
+        <nav class="dashboard-quick-tiles" aria-label="Quick access">
+          <button class="quick-tile tile-calendar" type="button" data-go="calendar"><span class="quick-tile-icon">▦</span><span><strong>Calendar</strong><small>Dates & events</small></span><b>↗</b></button>
+          <button class="quick-tile tile-tasks" type="button" data-go="tasks"><span class="quick-tile-icon">☷</span><span><strong>My tasks</strong><small>Things to do</small></span><b>↗</b></button>
+          <button class="quick-tile tile-projects" type="button" data-go="projects"><span class="quick-tile-icon">▣</span><span><strong>Projects</strong><small>What you're building</small></span><b>↗</b></button>
+          <button class="quick-tile tile-meals" type="button" data-go="wellness"><span class="quick-tile-icon">♧</span><span><strong>Food & wellness</strong><small>Care for yourself</small></span><b>↗</b></button>
+          <button class="quick-tile tile-lists" type="button" data-go="collections"><span class="quick-tile-icon">▤</span><span><strong>Lists</strong><small>Ideas & collections</small></span><b>↗</b></button>
+          <button class="quick-tile tile-home" type="button" data-go="home"><span class="quick-tile-icon">⌂</span><span><strong>Home</strong><small>Keep life running</small></span><b>↗</b></button>
+        </nav>
+
+        <div class="stats-grid dashboard-stats-grid">
+          <article class="stat-card stat-tile stat-tile-sage"><div class="stat-icon sage">☷</div><div><span>Tasks to do</span><strong id="task-count">0</strong><small>One step at a time</small></div></article>
+          <article class="stat-card stat-tile stat-tile-clay"><div class="stat-icon clay">◷</div><div><span>Habits completed</span><strong id="habit-count">0 / 3</strong><small>Small daily rituals</small></div></article>
+          <article class="stat-card stat-tile stat-tile-sand"><div class="stat-icon sand">✳</div><div><span>Goals in progress</span><strong id="goal-count">0</strong><small>Keep moving gently</small></div></article>
+          <article class="stat-card stat-tile stat-tile-blue"><div class="stat-icon blue">▦</div><div><span>Events today</span><strong id="dashboard-event-count">0</strong><small id="dashboard-event-caption">Space in your day</small></div></article>
         </div>
 
-        <div class="content-grid">
-          <article class="panel tasks-panel" data-dashboard-card="tasks">
-            <div class="panel-heading"><div><p class="eyebrow">YOUR PRIORITIES</p><h2>Today's tasks</h2></div><button class="text-button" data-go="tasks">View all ↗</button></div>
-            <form id="quick-task-form" class="quick-add"><input id="quick-task-input" maxlength="100" placeholder="What needs your attention?" aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
-            <div id="today-task-list" class="task-list"></div>
-            <p class="empty-hint" id="task-empty">Your list is clear. Add one small thing to get started.</p>
-          </article>
-
-          <article class="panel habits-panel" data-dashboard-card="habits">
-            <div class="panel-heading"><div><p class="eyebrow">SMALL DAILY RITUALS</p><h2>Daily habits</h2></div><button class="text-button" data-go="habits">Manage ↗</button></div>
-            <div id="dashboard-habits" class="habit-list"></div>
-          </article>
-
-          <article class="panel focus-panel" data-dashboard-card="checkin">
-            <div class="panel-heading"><div><p class="eyebrow">A MOMENT FOR YOU</p><h2>Daily check-in</h2></div><span class="leaf-mark">❧</span></div>
-            <p class="checkin-question">How are you feeling today?</p>
-            <div class="mood-options" id="mood-options">
-              <button data-mood="Low" aria-label="Low mood">☁️</button><button data-mood="Okay" aria-label="Okay mood">🌿</button><button data-mood="Good" aria-label="Good mood">☀️</button><button data-mood="Great" aria-label="Great mood">🌼</button>
+        <div class="dashboard-main-grid">
+          <article class="dashboard-card dashboard-priorities-card" data-dashboard-card="priorities">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">THE IMPORTANT THINGS</p><h2>My top three</h2></div><span class="dashboard-card-symbol">✳</span></div>
+            <p class="dashboard-card-intro">If nothing else gets done, these are enough.</p>
+            <div class="dashboard-priority-list">
+              <label><span>01</span><input id="dashboard-priority-1" maxlength="140" placeholder="My first priority..."></label>
+              <label><span>02</span><input id="dashboard-priority-2" maxlength="140" placeholder="My second priority..."></label>
+              <label><span>03</span><input id="dashboard-priority-3" maxlength="140" placeholder="My third priority..."></label>
             </div>
-            <p class="mood-feedback" id="mood-feedback">There is no right or wrong answer.</p>
+            <button class="dashboard-card-link" type="button" data-go="daily">Open daily planner <span>↗</span></button>
           </article>
 
-          <article class="panel upcoming-panel" data-dashboard-card="upcoming">
-            <div class="panel-heading"><div><p class="eyebrow">COMING UP</p><h2>Upcoming events</h2></div><button class="text-button" data-go="calendar">Calendar ↗</button></div>
-            <div id="dashboard-upcoming" class="dashboard-upcoming-list"></div>
+          <article class="dashboard-card dashboard-schedule-card" data-dashboard-card="schedule">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">YOUR DAY, AT A GLANCE</p><h2>Today's schedule</h2></div><button class="dashboard-card-link" type="button" data-go="daily">Full day ↗</button></div>
+            <form id="dashboard-schedule-form" class="dashboard-schedule-form"><input type="time" id="dashboard-schedule-time" aria-label="Schedule time" required><input id="dashboard-schedule-activity" maxlength="120" placeholder="Add an activity..." aria-label="Activity" required><button type="submit" aria-label="Add to schedule">+</button></form>
+            <div id="dashboard-schedule-list" class="dashboard-timeline"></div>
           </article>
 
-          <article class="panel today-life-panel" data-dashboard-card="todaylife">
-            <div class="panel-heading"><div><p class="eyebrow">YOUR DAY, CONNECTED</p><h2>Meals & movement</h2></div><button class="text-button" data-go="wellness">Wellness ↗</button></div>
+          <article class="dashboard-card dashboard-tasks-card" data-dashboard-card="tasks">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">ONE THING AT A TIME</p><h2>My to-do list</h2></div><button class="dashboard-card-link" type="button" data-go="tasks">View all ↗</button></div>
+            <form id="quick-task-form" class="quick-add dashboard-quick-add"><input id="quick-task-input" maxlength="100" placeholder="Add something to today..." aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
+            <div id="today-task-list" class="task-list"></div>
+            <p class="empty-hint" id="task-empty">Your list is clear. Enjoy the breathing room.</p>
+          </article>
+
+          <article class="dashboard-card dashboard-habits-card" data-dashboard-card="habits">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">LITTLE THINGS ADD UP</p><h2>Daily habits</h2></div><button class="dashboard-card-link" type="button" data-go="habits">Manage ↗</button></div>
+            <div id="dashboard-habits" class="habit-list"></div>
+            <div class="dashboard-progress-track"><span id="dashboard-habit-progress"></span></div>
+            <small class="dashboard-progress-caption" id="dashboard-habit-caption">A little progress is still progress.</small>
+          </article>
+
+          <article class="dashboard-card dashboard-meals-card" data-dashboard-card="todaylife">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">NOURISH & MOVE</p><h2>Meals and movement</h2></div><button class="dashboard-card-link" type="button" data-go="wellness">Wellness ↗</button></div>
             <div id="dashboard-today-life" class="dashboard-today-life"></div>
           </article>
 
-          <article class="panel intention-panel" data-dashboard-card="intention">
-            <p class="eyebrow">TODAY'S INTENTION</p><h2>What would make today feel meaningful?</h2>
+          <article class="dashboard-card dashboard-events-card" data-dashboard-card="upcoming">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">MAKE SPACE FOR WHAT MATTERS</p><h2>On the calendar</h2></div><button class="dashboard-card-link" type="button" data-go="calendar">Calendar ↗</button></div>
+            <div id="dashboard-upcoming" class="dashboard-upcoming-list"></div>
+          </article>
+
+          <article class="dashboard-card dashboard-checkin-card" data-dashboard-card="checkin">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">A MOMENT FOR YOU</p><h2>How are you feeling?</h2></div><span class="dashboard-card-symbol">☼</span></div>
+            <div class="mood-options" id="mood-options"><button data-dashboard-mood="Low" aria-label="Low mood">☁</button><button data-dashboard-mood="Okay" aria-label="Okay mood">🌿</button><button data-dashboard-mood="Good" aria-label="Good mood">☀</button><button data-dashboard-mood="Great" aria-label="Great mood">✿</button></div>
+            <p class="mood-feedback" id="mood-feedback">There is no right or wrong answer.</p>
+          </article>
+
+          <article class="dashboard-card dashboard-intention-card" data-dashboard-card="intention">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">A GENTLE REMINDER</p><h2>Today's intention</h2></div><span class="dashboard-card-symbol">❧</span></div>
             <textarea id="intention-input" rows="3" maxlength="240" placeholder="Today, I want to make space for..."></textarea>
             <span class="save-hint" id="intention-status">Saved on this device</span>
           </article>

@@ -1,55 +1,22 @@
-MY LIFE PLANNER — INTEGRATED UPGRADE
-====================================
+MY LIFE PLANNER — DASHBOARD DESIGN UPDATE
 
-This update builds on your existing My Life Planner. It keeps the existing IndexedDB database name/store and adds new fields to the existing saved data rather than replacing the database.
+This update refreshes the dashboard to use a GGC-inspired day-first layout while keeping My Life Planner's own earthy branding.
 
-WHAT'S NEW
-----------
-1. Integrated dashboard
-   - Today's meals, movement and Daily Planner priorities appear on the dashboard.
-   - Dashboard cards can be hidden/shown and moved up/down in Backup & Settings.
-   - Global search now includes goals, habits, meals and saved recipes.
-   - Optional automatic overdue-task carry-over can be switched on in Backup & Settings.
+WHAT CHANGED
+- A six-tile quick-access row for Calendar, Tasks, Projects, Food & Wellness, Lists and Home.
+- Soft pastel dashboard tiles with rounded corners, icon blocks and cleaner spacing.
+- A date picker with previous day, next day and Today controls.
+- A Top Three priorities tile connected to the selected day's Daily Planner priorities.
+- A daily schedule tile connected to the selected day's saved schedule.
+- A to-do tile with quick-add and check-off controls.
+- A habits tile with completion progress.
+- Meals and movement tile, upcoming calendar tile, and daily mood check-in.
+- Dashboard cards can still be hidden and reordered in Backup & Settings.
+- Service worker cache updated to v12.
 
-2. Full Monday–Sunday weekly planner
-   - Seven-day spread with daily focus fields.
-   - View and add time-specific schedule items directly in each day.
-   - Tasks, events, habits, meals and workouts are shown together.
-   - Tick tasks and habits from the weekly spread.
-   - Open any day in the Daily Planner.
-
-3. Advanced habits and routines
-   - Habit frequencies: daily, weekdays, weekends, twice weekly, three times weekly or once weekly.
-   - Weekly habit targets and simple streak counts.
-   - Routine frequencies: daily, weekdays, weekends or weekly.
-   - Existing habit completion data is migrated into date-based check-ins where possible.
-
-4. Connected meal planning
-   - Save reusable recipes with ingredients and instructions.
-   - Add a saved recipe to a selected date in the meal plan.
-   - Recipe ingredients are added to the grocery list automatically.
-   - Ingredients entered in the meal planner continue to be added to groceries.
-   - Meals appear on the weekly spread, Daily Planner and dashboard.
-
-5. Visual wellness and goal tracking
-   - 30-day mood trend chart with unrecorded days shown as gaps.
-   - 30-day average sleep and water summaries.
-   - Goals now support life categories, target dates, reasons, next steps and progress.
-
-IMPORTANT LIMITATION — CLOUD SYNC
----------------------------------
-Cloud synchronisation and personal accounts are NOT enabled in this update. The planner still stores data in the browser on the device where it is used. A secure sync service requires a backend provider, account/authentication setup, database rules and user-specific configuration. Do not enter passwords or private keys into the public GitHub repository.
-
-BEFORE UPDATING
----------------
-1. Open your current planner.
-2. Go to Backup & Settings.
-3. Click Download backup and save the JSON file somewhere safe.
-
-UPLOAD TO GITHUB
-----------------
-1. Download this ZIP and extract it.
-2. Open your repository:
+UPLOAD INSTRUCTIONS
+1. Download and extract this ZIP.
+2. Open your GitHub repository:
    https://github.com/TheImperfectPlans/My-Life-Planner
 3. Upload and replace these four files in the repository root:
    - index.html
@@ -57,24 +24,13 @@ UPLOAD TO GITHUB
    - style.css
    - service-worker.js
 4. Commit the changes.
-5. Open the repository's Actions tab and wait for the Pages deployment to show a green tick.
-6. Open your planner:
-   https://theimperfectplans.github.io/My-Life-Planner/
-7. Press Ctrl + Shift + R to force a refresh.
+5. Wait for the GitHub Actions deployment to show a green tick.
+6. Open https://theimperfectplans.github.io/My-Life-Planner/
+7. Press Ctrl + Shift + R to force-refresh the page.
 
-KEEP THESE EXISTING FILES
--------------------------
-Do not delete or replace manifest.json or icon.svg. They are not included in this update because they do not need to change.
-
-AFTER DEPLOYMENT
-----------------
-- Check the new Monday–Sunday weekly spread.
-- Add a habit with a weekly frequency and tick it off on different days.
-- Save a recipe, then use Add to meal plan. Check that its ingredients appear in groceries.
-- Add wellness check-ins on a few dates to populate the 30-day chart.
-- Open Backup & Settings to move dashboard cards and optionally enable automatic overdue-task carry-over.
-- Download another backup after testing.
-
-VALIDATION
-----------
-The JavaScript syntax, static HTML element references, duplicate HTML IDs, service-worker cache version and ZIP integrity were checked before packaging. A full interactive browser test could not be completed in this environment, so please test the new interactions after deployment.
+IMPORTANT
+- Keep your existing manifest.json and icon.svg unchanged.
+- Your existing IndexedDB database name and store are unchanged.
+- The dashboard uses the existing dailyPlans, tasks, habits, meals, workouts, events and mood data. No database reset is required.
+- Download a planner backup before updating as a sensible precaution.
+- The reference demo is a client-rendered single-page app and its private dashboard view could not be directly inspected from the supplied deep link. This update follows the dashboard features GGC publicly describes: schedule, top priorities, to-dos, habits, meals and a quick check-in. It is an inspired layout, not a pixel-for-pixel copy.

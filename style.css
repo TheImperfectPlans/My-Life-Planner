@@ -122,3 +122,97 @@ body[data-theme="sage"]{--paper:#edf0e9;--cream:#e0e7dc;--sage:#dce6d8;--sage-da
 @media(max-width:600px){.dashboard-today-life,.wellness-summary{grid-template-columns:1fr}.habit-entry{grid-template-columns:1fr}.recipe-card{grid-template-columns:1fr}.recipe-actions{justify-content:flex-start}.wellness-chart-heading{align-items:flex-start;flex-direction:column}}
 .weekly-schedule-form{display:grid;grid-template-columns:66px minmax(0,1fr) 27px;gap:4px;margin-top:4px}.weekly-schedule-form input{min-width:0;width:100%;border:1px solid var(--line);border-radius:5px;background:#fffefa;padding:5px;font:inherit;font-size:9px;color:var(--ink)}.weekly-schedule-form button,.weekly-schedule-row button{border:1px solid var(--line);border-radius:5px;background:#f0efe7;color:#69745f;cursor:pointer}.weekly-schedule-row{display:flex;align-items:center;justify-content:space-between;gap:5px}.weekly-schedule-row button{width:20px;height:20px;line-height:1;padding:0;flex:none}
 .planning-preference{display:grid;gap:6px;margin-top:15px;padding:13px;border:1px solid var(--line);border-radius:8px;background:#fbfaf6}.planning-preference label{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink)}.planning-preference input{accent-color:#87917b}.planning-preference small{font-size:9px;color:#999486;margin-left:22px}
+
+/* Dashboard refresh: soft, rounded GGC-inspired tiles and a day-first layout. */
+#dashboard-view{padding-top:30px}
+.dashboard-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin-bottom:23px}
+.dashboard-greeting h1{font:400 clamp(30px,3.4vw,43px) Georgia,serif;letter-spacing:-1.2px;margin:8px 0 7px;color:#3d3c32}
+.dashboard-greeting .subheading{font-size:14px}
+.dashboard-date-control{display:flex;align-items:center;gap:6px;padding:6px;background:#eeece4;border:1px solid #e4e0d5;border-radius:14px;flex:none}
+.dashboard-date-control>button{width:31px;height:31px;border:0;border-radius:9px;background:#fffefa;color:#727967;font-size:22px;line-height:1}
+.dashboard-date-control label{display:grid;gap:1px;text-align:center;padding:0 8px;min-width:105px;color:#5f6858;font:15px Georgia,serif}
+.dashboard-date-control label span{font-weight:600}
+.dashboard-date-control input{width:100%;border:0;background:transparent;text-align:center;color:#918d80;font:9px system-ui,sans-serif;outline:none}
+.dashboard-date-control .dashboard-today-button{width:auto;padding:0 10px;font-size:10px;background:#7e8b73;color:white}
+.dashboard-quick-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:11px;margin-bottom:16px}
+.quick-tile{min-width:0;min-height:82px;border:1px solid transparent;border-radius:16px;padding:13px 12px;display:grid;grid-template-columns:36px minmax(0,1fr) 12px;gap:9px;align-items:center;text-align:left;color:#4c5045;transition:transform .16s ease,box-shadow .16s ease}
+.quick-tile:hover{transform:translateY(-2px);box-shadow:0 8px 18px #534a3712}
+.quick-tile-icon{width:35px;height:35px;border-radius:12px;display:grid;place-items:center;background:#ffffff70;font-size:19px;color:#68745f}
+.quick-tile>span:nth-child(2){display:grid;gap:4px;min-width:0}
+.quick-tile strong{font:15px Georgia,serif;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quick-tile small{font-size:9px;color:#7e7b70;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quick-tile>b{font-size:12px;font-weight:400;color:#8a897c;align-self:start}
+.tile-calendar{background:#e7eadf;border-color:#dce2d4}.tile-tasks{background:#f0e4d9;border-color:#eadbd0}.tile-projects{background:#e7e2ed;border-color:#ddd5e7}.tile-meals{background:#f0e9d7;border-color:#e8dfc8}.tile-lists{background:#dfe9e8;border-color:#d2e0de}.tile-home{background:#e9e2dc;border-color:#e1d7ce}
+.dashboard-stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:16px}
+.stat-tile{min-height:88px;border:1px solid transparent;border-radius:16px;padding:15px 16px;box-shadow:none;gap:12px}
+.stat-tile-sage{background:#e8ece2;border-color:#dfe5d8}.stat-tile-clay{background:#f0e5dd;border-color:#e9dcd2}.stat-tile-sand{background:#f1ecdF;border-color:#e9e2d1}.stat-tile-blue{background:#e3e9e9;border-color:#d8e1e1}
+.stat-tile .stat-icon{width:37px;height:37px;border-radius:12px;background:#ffffff85}
+.stat-icon.blue{color:#6c8583;background:#dce7e6}
+.stat-tile span{font-size:10px;color:#77796d}.stat-tile strong{font-size:24px;color:#4a4b40}.stat-tile small{font-size:9px;color:#929083}
+.dashboard-main-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:13px;align-items:stretch}
+.dashboard-card{min-width:0;border:1px solid #e8e4da;border-radius:18px;padding:19px 20px;background:#fffefa;box-shadow:0 5px 18px rgba(64,55,43,.035)}
+.dashboard-card h2{font:400 21px Georgia,serif;letter-spacing:-.25px;margin:0;color:#45463b}
+.dashboard-card-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.dashboard-card-heading .eyebrow{margin:0 0 5px;font-size:8px;letter-spacing:1.5px}
+.dashboard-card-symbol{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:#ffffff8a;color:#859078;font:20px Georgia,serif}
+.dashboard-card-intro{font:italic 12px Georgia,serif;color:#898679;margin:0 0 13px}
+.dashboard-priorities-card{grid-column:span 5;background:#e9ede3;border-color:#dfe5d8}
+.dashboard-schedule-card{grid-column:span 7;background:#fffefa}
+.dashboard-tasks-card{grid-column:span 7;background:#fffefa}
+.dashboard-habits-card{grid-column:span 5;background:#f2e9e2;border-color:#e9ddd4}
+.dashboard-meals-card{grid-column:span 6;background:#f2eedf;border-color:#e9e2cf}
+.dashboard-events-card{grid-column:span 6;background:#e7eded;border-color:#dce5e4}
+.dashboard-checkin-card{grid-column:span 5;background:#eee9f0;border-color:#e3dce7}
+.dashboard-intention-card{grid-column:span 7;background:#eeeade;border-color:#e5dfce}
+.dashboard-card-link{border:0;background:transparent;padding:3px 0;color:#79856f;font-size:10px;white-space:nowrap}
+.dashboard-card-link:hover{text-decoration:underline}
+.dashboard-priority-list{display:grid;gap:8px}
+.dashboard-priority-list label{display:grid;grid-template-columns:29px minmax(0,1fr);align-items:center;gap:8px;padding:7px 10px;border-radius:10px;background:#ffffffa3}
+.dashboard-priority-list label>span{font:italic 13px Georgia,serif;color:#8b967f}
+.dashboard-priority-list input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#4a4b40;font:13px Georgia,serif}
+.dashboard-priority-list input::placeholder{color:#a6a698}
+.dashboard-priority-list input:focus{border-bottom:1px solid #aab49e}
+.dashboard-priorities-card .dashboard-card-link{margin-top:12px}
+.dashboard-schedule-form{display:grid;grid-template-columns:84px minmax(0,1fr) 34px;gap:7px;margin-bottom:10px}
+.dashboard-schedule-form input{min-width:0;border:1px solid #e9e5db;border-radius:9px;background:#fbfaf6;padding:9px 10px;color:#56574c;font-size:10px}
+.dashboard-schedule-form button{border:0;border-radius:9px;background:#849078;color:white;font-size:20px}
+.dashboard-timeline{display:grid;gap:0;max-height:220px;overflow:auto}
+.dashboard-timeline-row{display:grid;grid-template-columns:51px 10px minmax(0,1fr) 22px;align-items:center;gap:9px;min-height:36px;border-bottom:1px solid #efede6;font-size:11px}
+.dashboard-timeline-row time{font-size:10px;color:#89917f;font-variant-numeric:tabular-nums}
+.dashboard-timeline-dot{width:7px;height:7px;border-radius:50%;background:#9aa58e;box-shadow:0 0 0 3px #e9ede3}
+.dashboard-timeline-row strong{font-weight:500;color:#55564c;overflow-wrap:anywhere}
+.dashboard-timeline-row button{border:0;background:transparent;color:#aaa69b;font-size:16px}
+.dashboard-empty{font:italic 12px Georgia,serif;color:#9a9689;padding:12px 0;margin:0}
+.dashboard-quick-add{margin-bottom:7px}
+.dashboard-quick-add input{background:#f8f7f2;border-color:#ebe7de}
+.dashboard-quick-add button{border-radius:9px;background:#87947d}
+.dashboard-task-row{display:flex;align-items:center;gap:9px;padding:9px 2px;border-bottom:1px solid #efede7;font-size:11px;color:#55564c;cursor:pointer}
+.dashboard-task-row:last-child{border-bottom:0}
+.dashboard-task-row input{accent-color:#819078;width:15px;height:15px;flex:none}
+.dashboard-task-row span{flex:1;min-width:0;overflow-wrap:anywhere}
+.dashboard-task-row input:checked+span{text-decoration:line-through;color:#aaa69b}
+.dashboard-task-row small{font-size:9px;color:#9c988c;white-space:nowrap}
+.dashboard-overdue-tag{background:#f2e3dc;color:#a07867!important;border-radius:5px;padding:3px 5px}
+.dashboard-habits-card .habit-list{gap:11px}
+.dashboard-habits-card .habit-row{font-size:11px}
+.dashboard-habits-card .habit-row small{color:#9a8e83}
+.dashboard-progress-track{height:6px;border-radius:10px;background:#ffffffa3;overflow:hidden;margin-top:17px}
+.dashboard-progress-track span{display:block;width:0;height:100%;border-radius:10px;background:#89977f;transition:width .2s ease}
+.dashboard-progress-caption{display:block;margin-top:7px;font-size:9px;color:#958b80}
+.dashboard-today-life{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.dashboard-meals-card .today-life-block{padding:12px;border-radius:12px;background:#ffffff85;min-height:112px}
+.today-life-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#fffefa;color:#8b987c;font-size:15px}
+.dashboard-meals-card .today-life-block strong{font:16px Georgia,serif;color:#626c57}
+.dashboard-meals-card .today-life-block span:not(.today-life-icon),.dashboard-meals-card .today-life-block small{font-size:10px;color:#898577}
+.dashboard-events-card .dashboard-upcoming-list{display:grid;gap:4px}
+.dashboard-events-card .upcoming-event-row{padding:8px 0;border-bottom:1px solid #ffffffb0}
+.dashboard-checkin-card .mood-options{gap:9px;margin:18px 0 10px}
+.dashboard-checkin-card .mood-options button{width:43px;height:43px;border:1px solid #ffffff;border-radius:14px;background:#ffffffa6;color:#727b69;font-size:20px;filter:none}
+.dashboard-checkin-card .mood-options button.selected{outline:2px solid #98a58b;outline-offset:2px;background:#fff}
+.dashboard-checkin-card .mood-feedback{font:italic 12px Georgia,serif;color:#888394}
+.dashboard-intention-card textarea{width:100%;min-height:91px;resize:vertical;border:1px solid #e5dfd2;border-radius:12px;background:#ffffffa0;padding:13px;color:#56564b;font:italic 14px/1.5 Georgia,serif;outline:none}
+.dashboard-intention-card .save-hint{display:block;margin-top:7px;color:#969184}
+#dashboard-view .page-footer{padding-top:25px}
+@media(max-width:1100px){.dashboard-quick-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.dashboard-priorities-card,.dashboard-habits-card,.dashboard-checkin-card{grid-column:span 6}.dashboard-schedule-card,.dashboard-tasks-card,.dashboard-meals-card,.dashboard-events-card,.dashboard-intention-card{grid-column:span 6}}
+@media(max-width:760px){.dashboard-hero{display:block}.dashboard-date-control{margin-top:17px;width:max-content;max-width:100%}.dashboard-quick-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-main-grid{grid-template-columns:1fr}.dashboard-main-grid>.dashboard-card{grid-column:1/-1}}
+@media(max-width:440px){.dashboard-greeting h1{font-size:31px}.dashboard-quick-tiles{gap:8px}.quick-tile{grid-template-columns:31px minmax(0,1fr) 10px;gap:7px;padding:10px;min-height:72px}.quick-tile-icon{width:31px;height:31px}.quick-tile strong{font-size:13px}.quick-tile small{font-size:8px}.dashboard-stats-grid{gap:8px}.stat-tile{padding:11px;gap:8px}.stat-tile .stat-icon{width:31px;height:31px}.stat-tile strong{font-size:21px}.dashboard-card{padding:16px}.dashboard-date-control{gap:4px}.dashboard-date-control label{min-width:85px}}
