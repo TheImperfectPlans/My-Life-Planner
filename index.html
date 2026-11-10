@@ -65,8 +65,8 @@
         <div class="dashboard-hero">
           <div class="dashboard-greeting">
             <p class="eyebrow" id="welcome-date">YOUR DAY, AT YOUR PACE</p>
-            <h1>Today, thoughtfully planned<span class="period">.</span></h1>
-            <p class="subheading">Your day, your priorities, and a little space to breathe.</p>
+            <h1>My day, all in one place<span class="period">.</span></h1>
+            <p class="subheading">A calm home for everything you want to keep track of today.</p>
           </div>
           <div class="dashboard-date-control" aria-label="Choose dashboard date">
             <button type="button" id="dashboard-prev-day" aria-label="Previous day">‹</button>
@@ -76,77 +76,77 @@
           </div>
         </div>
 
-        <nav class="dashboard-quick-tiles" aria-label="Quick access">
-          <button class="quick-tile tile-calendar" type="button" data-go="calendar"><span class="quick-tile-icon">▦</span><span><strong>Calendar</strong><small>Dates & events</small></span><b>↗</b></button>
-          <button class="quick-tile tile-tasks" type="button" data-go="tasks"><span class="quick-tile-icon">☷</span><span><strong>My tasks</strong><small>Things to do</small></span><b>↗</b></button>
-          <button class="quick-tile tile-projects" type="button" data-go="projects"><span class="quick-tile-icon">▣</span><span><strong>Projects</strong><small>What you're building</small></span><b>↗</b></button>
-          <button class="quick-tile tile-meals" type="button" data-go="wellness"><span class="quick-tile-icon">♧</span><span><strong>Food & wellness</strong><small>Care for yourself</small></span><b>↗</b></button>
-          <button class="quick-tile tile-lists" type="button" data-go="collections"><span class="quick-tile-icon">▤</span><span><strong>Lists</strong><small>Ideas & collections</small></span><b>↗</b></button>
-          <button class="quick-tile tile-home" type="button" data-go="home"><span class="quick-tile-icon">⌂</span><span><strong>Home</strong><small>Keep life running</small></span><b>↗</b></button>
-        </nav>
-
-        <div class="stats-grid dashboard-stats-grid">
-          <article class="stat-card stat-tile stat-tile-sage"><div class="stat-icon sage">☷</div><div><span>Tasks to do</span><strong id="task-count">0</strong><small>One step at a time</small></div></article>
-          <article class="stat-card stat-tile stat-tile-clay"><div class="stat-icon clay">◷</div><div><span>Habits completed</span><strong id="habit-count">0 / 3</strong><small>Small daily rituals</small></div></article>
-          <article class="stat-card stat-tile stat-tile-sand"><div class="stat-icon sand">✳</div><div><span>Goals in progress</span><strong id="goal-count">0</strong><small>Keep moving gently</small></div></article>
-          <article class="stat-card stat-tile stat-tile-blue"><div class="stat-icon blue">▦</div><div><span>Events today</span><strong id="dashboard-event-count">0</strong><small id="dashboard-event-caption">Space in your day</small></div></article>
+        <div class="dashboard-focus-strip">
+          <div><span class="dashboard-focus-icon">☼</span><span><strong>Your day at a glance</strong><small>Appointments, plans, routines and little moments that matter.</small></span></div>
+          <nav class="dashboard-quick-links" aria-label="Quick access">
+            <button type="button" data-go="calendar">Calendar ↗</button><button type="button" data-go="tasks">Tasks ↗</button><button type="button" data-go="wellness">Wellness ↗</button>
+          </nav>
         </div>
 
-        <div class="dashboard-main-grid">
-          <article class="dashboard-card dashboard-priorities-card" data-dashboard-card="priorities">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">THE IMPORTANT THINGS</p><h2>My top three</h2></div><span class="dashboard-card-symbol">✳</span></div>
-            <p class="dashboard-card-intro">If nothing else gets done, these are enough.</p>
-            <div class="dashboard-priority-list">
-              <label><span>01</span><input id="dashboard-priority-1" maxlength="140" placeholder="My first priority..."></label>
-              <label><span>02</span><input id="dashboard-priority-2" maxlength="140" placeholder="My second priority..."></label>
-              <label><span>03</span><input id="dashboard-priority-3" maxlength="140" placeholder="My third priority..."></label>
-            </div>
-            <button class="dashboard-card-link" type="button" data-go="daily">Open daily planner <span>↗</span></button>
+        <div class="dashboard-main-grid dashboard-command-centre">
+          <article class="dashboard-card dashboard-card-wide dashboard-appointments-card" data-dashboard-card="appointments">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">WHAT'S HAPPENING</p><h2>Appointments & schedule</h2></div><button class="dashboard-card-link" type="button" data-go="calendar">Open calendar ↗</button></div>
+            <form id="dashboard-schedule-form" class="dashboard-schedule-form"><input type="time" id="dashboard-schedule-time" aria-label="Schedule time"><input id="dashboard-schedule-activity" maxlength="120" placeholder="Add a plan or activity..." aria-label="Activity" required><button type="submit" aria-label="Add to schedule">+</button></form>
+            <div id="dashboard-schedule-list" class="dashboard-timeline"></div>
+            <div class="dashboard-appointment-divider"></div><div id="dashboard-appointments-list" class="dashboard-appointments-list"></div>
           </article>
 
-          <article class="dashboard-card dashboard-schedule-card" data-dashboard-card="schedule">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">YOUR DAY, AT A GLANCE</p><h2>Today's schedule</h2></div><button class="dashboard-card-link" type="button" data-go="daily">Full day ↗</button></div>
-            <form id="dashboard-schedule-form" class="dashboard-schedule-form"><input type="time" id="dashboard-schedule-time" aria-label="Schedule time" required><input id="dashboard-schedule-activity" maxlength="120" placeholder="Add an activity..." aria-label="Activity" required><button type="submit" aria-label="Add to schedule">+</button></form>
-            <div id="dashboard-schedule-list" class="dashboard-timeline"></div>
+          <article class="dashboard-card dashboard-priorities-card" data-dashboard-card="priorities">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">TODAY'S FOCUS</p><h2>My priorities</h2></div><span class="dashboard-card-symbol">✳</span></div>
+            <p class="dashboard-card-intro">Three things that would make today feel meaningful.</p>
+            <div class="dashboard-priority-list"><label><span>01</span><input id="dashboard-priority-1" maxlength="140" placeholder="First priority..."></label><label><span>02</span><input id="dashboard-priority-2" maxlength="140" placeholder="Second priority..."></label><label><span>03</span><input id="dashboard-priority-3" maxlength="140" placeholder="Third priority..."></label></div>
           </article>
 
           <article class="dashboard-card dashboard-tasks-card" data-dashboard-card="tasks">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">ONE THING AT A TIME</p><h2>My to-do list</h2></div><button class="dashboard-card-link" type="button" data-go="tasks">View all ↗</button></div>
-            <form id="quick-task-form" class="quick-add dashboard-quick-add"><input id="quick-task-input" maxlength="100" placeholder="Add something to today..." aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
-            <div id="today-task-list" class="task-list"></div>
-            <p class="empty-hint" id="task-empty">Your list is clear. Enjoy the breathing room.</p>
+            <div class="dashboard-card-heading"><div><p class="eyebrow">ONE STEP AT A TIME</p><h2>Today's tasks</h2></div><button class="dashboard-card-link" type="button" data-go="tasks">All tasks ↗</button></div>
+            <form id="quick-task-form" class="quick-add dashboard-quick-add"><input id="quick-task-input" maxlength="100" placeholder="Add a task for today..." aria-label="New task"><button type="submit" aria-label="Add task">+</button></form>
+            <div class="dashboard-task-count"><span id="task-count">0</span> open</div><div id="today-task-list" class="task-list"></div><p class="empty-hint" id="task-empty">Your list is clear. Enjoy the breathing room.</p>
+          </article>
+
+          <article class="dashboard-card dashboard-routines-card" data-dashboard-card="routines">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">YOUR DAILY RHYTHM</p><h2>Routines</h2></div><button class="dashboard-card-link" type="button" data-go="routines">Manage ↗</button></div>
+            <div id="dashboard-routines-list" class="dashboard-routines-list"></div>
           </article>
 
           <article class="dashboard-card dashboard-habits-card" data-dashboard-card="habits">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">LITTLE THINGS ADD UP</p><h2>Daily habits</h2></div><button class="dashboard-card-link" type="button" data-go="habits">Manage ↗</button></div>
-            <div id="dashboard-habits" class="habit-list"></div>
-            <div class="dashboard-progress-track"><span id="dashboard-habit-progress"></span></div>
-            <small class="dashboard-progress-caption" id="dashboard-habit-caption">A little progress is still progress.</small>
+            <div class="dashboard-card-heading"><div><p class="eyebrow">SMALL THINGS ADD UP</p><h2>Habit tracker</h2></div><button class="dashboard-card-link" type="button" data-go="habits">Manage ↗</button></div>
+            <div class="dashboard-habit-count" id="habit-count">0 / 0</div><div id="dashboard-habits" class="habit-list"></div><div class="dashboard-progress-track"><span id="dashboard-habit-progress"></span></div><small class="dashboard-progress-caption" id="dashboard-habit-caption">A little progress is still progress.</small>
           </article>
 
-          <article class="dashboard-card dashboard-meals-card" data-dashboard-card="todaylife">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">NOURISH & MOVE</p><h2>Meals and movement</h2></div><button class="dashboard-card-link" type="button" data-go="wellness">Wellness ↗</button></div>
+          <article class="dashboard-card dashboard-meals-card" data-dashboard-card="meals">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">NOURISH YOUR DAY</p><h2>Meals</h2></div><button class="dashboard-card-link" type="button" data-go="wellness">Meal planner ↗</button></div>
             <div id="dashboard-today-life" class="dashboard-today-life"></div>
           </article>
 
-          <article class="dashboard-card dashboard-events-card" data-dashboard-card="upcoming">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">MAKE SPACE FOR WHAT MATTERS</p><h2>On the calendar</h2></div><button class="dashboard-card-link" type="button" data-go="calendar">Calendar ↗</button></div>
-            <div id="dashboard-upcoming" class="dashboard-upcoming-list"></div>
+          <article class="dashboard-card dashboard-grocery-card" data-dashboard-card="groceries">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">DON'T FORGET THE LITTLE THINGS</p><h2>Grocery list</h2></div><button class="dashboard-card-link" type="button" data-go="home">Full list ↗</button></div>
+            <form id="dashboard-grocery-form" class="dashboard-inline-add"><input id="dashboard-grocery-input" maxlength="100" placeholder="Add a grocery item..." aria-label="Grocery item"><button type="submit" aria-label="Add grocery">+</button></form><div id="dashboard-grocery-list" class="dashboard-grocery-list"></div>
+          </article>
+
+          <article class="dashboard-card dashboard-planning-card" data-dashboard-card="planning">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">THE BIGGER PICTURE</p><h2>Weekly & monthly focus</h2></div><span class="dashboard-card-symbol">❧</span></div>
+            <div class="dashboard-period-focus"><strong>This week's priorities</strong><div id="dashboard-weekly-priorities"></div><button class="dashboard-card-link" type="button" data-go="weekly">Edit weekly plan ↗</button></div>
+            <div class="dashboard-period-focus"><strong>This month's priorities</strong><div id="dashboard-monthly-priorities"></div><button class="dashboard-card-link" type="button" data-go="monthly">Edit monthly plan ↗</button></div>
+          </article>
+
+          <article class="dashboard-card dashboard-goals-card" data-dashboard-card="goals">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">KEEP WHAT MATTERS IN VIEW</p><h2>My goals</h2></div><button class="dashboard-card-link" type="button" data-go="goals">All goals ↗</button></div><div id="dashboard-goals-list" class="dashboard-goals-list"></div>
           </article>
 
           <article class="dashboard-card dashboard-checkin-card" data-dashboard-card="checkin">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">A MOMENT FOR YOU</p><h2>How are you feeling?</h2></div><span class="dashboard-card-symbol">☼</span></div>
-            <div class="mood-options" id="mood-options"><button data-dashboard-mood="Low" aria-label="Low mood">☁</button><button data-dashboard-mood="Okay" aria-label="Okay mood">🌿</button><button data-dashboard-mood="Good" aria-label="Good mood">☀</button><button data-dashboard-mood="Great" aria-label="Great mood">✿</button></div>
-            <p class="mood-feedback" id="mood-feedback">There is no right or wrong answer.</p>
+            <div class="dashboard-card-heading"><div><p class="eyebrow">A MOMENT FOR YOU</p><h2>Daily check-in</h2></div><span class="dashboard-card-symbol">☼</span></div>
+            <p class="dashboard-card-intro">How are you arriving in this moment?</p><div class="mood-options" id="mood-options"><button data-dashboard-mood="Low" aria-label="Low mood">☁</button><button data-dashboard-mood="Okay" aria-label="Okay mood">🌿</button><button data-dashboard-mood="Good" aria-label="Good mood">☀</button><button data-dashboard-mood="Great" aria-label="Great mood">✿</button></div><p class="mood-feedback" id="mood-feedback">There is no right or wrong answer.</p>
           </article>
 
-          <article class="dashboard-card dashboard-intention-card" data-dashboard-card="intention">
-            <div class="dashboard-card-heading"><div><p class="eyebrow">A GENTLE REMINDER</p><h2>Today's intention</h2></div><span class="dashboard-card-symbol">❧</span></div>
-            <textarea id="intention-input" rows="3" maxlength="240" placeholder="Today, I want to make space for..."></textarea>
-            <span class="save-hint" id="intention-status">Saved on this device</span>
+          <article class="dashboard-card dashboard-gratitude-card" data-dashboard-card="gratitude">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">NOTICE THE GOOD</p><h2>Today's gratitude</h2></div><span class="dashboard-card-symbol">♡</span></div><textarea id="dashboard-gratitude" rows="3" maxlength="600" placeholder="Something I'm grateful for today..."></textarea><small class="save-hint">Saved to this date</small>
+          </article>
+
+          <article class="dashboard-card dashboard-evening-card" data-dashboard-card="evening">
+            <div class="dashboard-card-heading"><div><p class="eyebrow">CLOSE THE DAY GENTLY</p><h2>Evening reflection</h2></div><span class="dashboard-card-symbol">☾</span></div><textarea id="dashboard-evening" rows="4" maxlength="1000" placeholder="What went well? What felt hard? What can I let go of before tomorrow?"></textarea><small class="save-hint">Saved to this date</small>
           </article>
         </div>
-        <footer class="page-footer">MADE FOR SLOWER, MORE INTENTIONAL DAYS <span>✳</span></footer>
+        <footer class="page-footer">A PLACE TO GATHER YOUR DAY, WITHOUT NEEDING TO DO IT ALL <span>✳</span></footer>
       </section>
 
       <section class="view" id="tasks-view">
@@ -161,7 +161,7 @@
 
 
       <section class="view" id="calendar-view">
-        <div class="page-intro"><p class="eyebrow">MAKE ROOM FOR WHAT MATTERS</p><h1>My calendar<span class="period">.</span></h1><p class="subheading">Appointments, birthdays, reminders and tasks in one place.</p></div>
+        <div class="page-intro"><p class="eyebrow">MAKE ROOM FOR WHAT MATTERS</p><h1>My calendar<span class="period">.</span></h1><p class="subheading">Keep work, personal plans and everything in between colour-coded.</p></div>
         <article class="panel calendar-panel">
           <div class="calendar-toolbar">
             <div class="calendar-period-controls">
@@ -179,7 +179,7 @@
             </div>
           </div>
           <div class="calendar-legend">
-            <span><i class="legend-dot appointment"></i>Appointment</span><span><i class="legend-dot birthday"></i>Birthday</span><span><i class="legend-dot reminder"></i>Reminder</span><span><i class="legend-dot task"></i>Task</span>
+            <span><i class="legend-dot work"></i>Work</span><span><i class="legend-dot personal"></i>Personal</span><span><i class="legend-dot appointment"></i>Appointment</span><span><i class="legend-dot birthday"></i>Birthday</span><span><i class="legend-dot reminder"></i>Reminder</span><span><i class="legend-dot family"></i>Family</span><span><i class="legend-dot other"></i>Other</span><span><i class="legend-dot task"></i>Task</span>
           </div>
           <div id="calendar-grid" class="calendar-grid" aria-live="polite"></div>
         </article>
@@ -190,7 +190,7 @@
               <label>Event name<input id="event-title" maxlength="100" placeholder="e.g. Dentist appointment" required></label>
               <div class="event-form-row"><label>Start date<input id="event-date" type="date" required></label><label>End date <span class="muted">(optional)</span><input id="event-end-date" type="date"></label></div>
               <label>Time <span class="muted">(optional)</span><input id="event-time" type="time"></label>
-              <label>Type<select id="event-type"><option value="appointment">Appointment</option><option value="birthday">Birthday</option><option value="reminder">Reminder</option></select></label>
+              <label>Event category<select id="event-type"><option value="personal" selected>Personal · blue</option><option value="work">Work · green</option><option value="appointment">Appointment · lavender</option><option value="birthday">Birthday · coral</option><option value="reminder">Reminder · gold</option><option value="family">Family · peach</option><option value="other">Other · grey</option></select></label>
               <label>Repeat<select id="event-repeat"><option value="none">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option><option value="yearly">Every year</option></select></label>
               <label>Repeat until <span class="muted">(required for repeating events)</span><input id="event-repeat-until" type="date"></label>
               <button class="primary-button" type="submit">Save event +</button>
